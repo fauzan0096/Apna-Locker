@@ -1,0 +1,637 @@
+<title>Apna Locker</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: ek hi lambi phone column. Upar do tabs (Kaagzaat / Yojnayein). Kaagzaat tab mein search, tareekh ki status strip aur passport-page jaisi mono labels wali list. */
+:root{
+  --bg:#EDF1F3; --surface:#FFFFFF; --ink:#12222E; --muted:#566874; --line:#D3DCE2;
+  --accent:#0A6C66; --accent-ink:#FFFFFF;
+  --ok:#16794A; --ok-bg:#DDF1E6; --warn:#8F5200; --warn-bg:#FBE9C9; --bad:#B3261E; --bad-bg:#F9DEDB;
+  --scrim:#0A141C; --scrim-ink:#F2F6F8;
+  --f-display:'Bricolage Grotesque',system-ui,sans-serif;
+  --f-body:'IBM Plex Sans',system-ui,sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1A23; --surface:#142431; --ink:#E6EEF3; --muted:#93A5B2; --line:#25394A;
+    --accent:#4FC3B5; --accent-ink:#06211E;
+    --ok:#59C98C; --ok-bg:#12372A; --warn:#F0B35A; --warn-bg:#3B2D12; --bad:#FF8A80; --bad-bg:#43201E;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1A23; --surface:#142431; --ink:#E6EEF3; --muted:#93A5B2; --line:#25394A;
+  --accent:#4FC3B5; --accent-ink:#06211E;
+  --ok:#59C98C; --ok-bg:#12372A; --warn:#F0B35A; --warn-bg:#3B2D12; --bad:#FF8A80; --bad-bg:#43201E;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.5;
+  padding-block:0 48px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:660px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.15}
+.brand{padding-block:22px 12px}
+.brand h1{font-size:32px;font-weight:700;letter-spacing:-.01em}
+.brand p{margin:4px 0 0;color:var(--muted)}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+
+.tabbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:var(--line);border-radius:10px}
+.tabs button{font:600 15px var(--f-body);color:var(--ink);background:transparent;border:0;border-radius:7px;padding:10px 8px;min-height:44px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+section[role="tabpanel"]{display:flex;flex-direction:column;gap:16px;padding-top:12px}
+.strip{display:grid;grid-template-columns:repeat(3,1fr);background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.strip div{padding:12px 10px;text-align:center;min-width:0}
+.strip div+div{border-left:1px solid var(--line)}
+.strip b{display:block;font:500 26px var(--f-mono);line-height:1.1}
+.strip span{font-size:12px;color:var(--muted)}
+.strip .bad b{color:var(--bad)} .strip .warn b{color:var(--warn)} .strip .ok b{color:var(--ok)}
+
+.searchrow{display:flex;gap:8px;flex-wrap:wrap}
+.searchrow input[type="search"]{flex:1 1 180px;min-width:0}
+input,select,textarea{
+  font:400 16px var(--f-body);color:var(--ink);background:var(--surface);border:1px solid var(--line);
+  border-radius:8px;padding:10px 12px;width:100%;min-height:44px;
+}
+input[type="file"]{padding:8px}
+textarea{min-height:72px;resize:vertical}
+label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:500;color:var(--muted);min-width:0}
+.btn{font:600 15px var(--f-body);background:var(--accent);color:var(--accent-ink);border:0;border-radius:8px;padding:10px 16px;min-height:44px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--line)}
+.btn[disabled]{opacity:.6;cursor:default}
+.linkbtn{font:600 13px var(--f-body);background:none;border:0;color:var(--bad);cursor:pointer;padding:6px 0;min-height:32px}
+
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.chips button{flex:none;font:500 13px var(--f-body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;min-height:36px;cursor:pointer}
+.chips button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+.formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:12px}
+.formgrid .full{grid-column:1/-1}
+.formmsg{min-height:20px;font-size:13px;color:var(--muted)}
+.formmsg.err{color:var(--bad)}
+
+.list{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;padding:14px 16px;align-items:start}
+.row+.row{border-top:1px solid var(--line)}
+.code{font:500 12px var(--f-mono);letter-spacing:.08em;border:1px solid var(--line);border-radius:4px;padding:6px 0;width:48px;text-align:center;color:var(--muted)}
+.info{min-width:0;display:flex;flex-direction:column;gap:4px}
+.info h3{font-size:17px;font-weight:600;overflow-wrap:anywhere}
+.meta{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.hijri{font:500 12px var(--f-mono);color:var(--muted)}
+.notes{font-size:14px;overflow-wrap:anywhere}
+.days{text-align:right;min-width:64px}
+.days b{display:block;font:500 24px var(--f-mono);line-height:1.1}
+.days small{font-size:12px;color:var(--muted)}
+.days.bad b{color:var(--bad)} .days.warn b{color:var(--warn)} .days.ok b{color:var(--ok)}
+.pill{display:inline-block;align-self:flex-start;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px}
+.pill.ok{background:var(--ok-bg);color:var(--ok)} .pill.warn{background:var(--warn-bg);color:var(--warn)} .pill.bad{background:var(--bad-bg);color:var(--bad)}
+.tag{font:500 11px var(--f-mono);letter-spacing:.06em;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:1px 6px;align-self:flex-start}
+.thumbs{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.thumb{width:64px;height:64px;padding:0;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--bg);cursor:pointer}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.empty{padding:24px 16px;text-align:center;color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#copyBox{min-height:110px;font-family:var(--f-mono);font-size:13px}
+
+.note{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+.links{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+a{color:var(--accent);font-weight:600}
+h2{font-size:19px;font-weight:600}
+.sub{margin:4px 0 0;font-size:14px;color:var(--muted)}
+
+.schemes{display:flex;flex-direction:column;gap:12px}
+.scheme{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.scheme h3{font-size:17px;font-weight:600}
+.scheme .why{font-size:13px;color:var(--muted)}
+.scheme details summary{cursor:pointer;font-weight:600;font-size:14px;color:var(--accent);min-height:32px;display:flex;align-items:center}
+.scheme ul{margin:4px 0 0;padding-left:20px;font-size:14px}
+.checkrow{flex-direction:row;align-items:center;gap:10px;font-size:14px;color:var(--ink)}
+.checkrow input{width:22px;height:22px;min-height:0;flex:none}
+
+#viewer{position:fixed;inset:0;z-index:20;background:var(--scrim);color:var(--scrim-ink);display:flex;flex-direction:column;gap:10px;
+  padding:calc(env(safe-area-inset-top,0px) + 12px) max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 12px) max(16px,env(safe-area-inset-left,0px))}
+#viewer .vbar{display:flex;gap:8px;align-items:center;justify-content:space-between}
+#viewer .vbar span{font-size:14px;overflow-wrap:anywhere;min-width:0}
+#viewer .stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+#viewer img{max-width:100%;max-height:100%;object-fit:contain}
+#viewer .btn{background:var(--scrim-ink);color:var(--scrim)}
+@media (prefers-reduced-motion:no-preference){.tabs button,.btn,.chips button{transition:background-color .15s}}
+</style>
+
+<div class="wrap">
+  <header class="brand">
+    <h1>Apna Locker</h1>
+    <p>Kaagzaat ek jagah, tareekh ki yaad, aur sarkari yojnayein.</p>
+  </header>
+
+  <div class="tabbar">
+    <div class="tabs" role="tablist" aria-label="Hisse">
+      <button id="tabDocs" role="tab" aria-selected="true" aria-controls="paneDocs">Kaagzaat</button>
+      <button id="tabSch" role="tab" aria-selected="false" aria-controls="paneSch">Sarkari Yojnayein</button>
+    </div>
+  </div>
+
+  <main>
+    <section id="paneDocs" role="tabpanel" aria-labelledby="tabDocs">
+      <div class="strip" id="strip" aria-live="polite"></div>
+
+      <div class="searchrow">
+        <input id="q" type="search" placeholder="Kaagaz dhundho: naam, passport, Aadhaar..." aria-label="Kaagzaat mein dhundho" autocomplete="off">
+        <button class="btn" id="toggleAdd" type="button" aria-expanded="false" aria-controls="addPanel">+ Naya kaagaz</button>
+      </div>
+
+      <form class="panel" id="addPanel" hidden>
+        <div class="formgrid">
+          <label for="fType">Kaagaz ki kism
+            <select id="fType"></select>
+          </label>
+          <label for="fHolder">Kiska hai
+            <input id="fHolder" type="text" placeholder="Main, Biwi, Abbu..." autocomplete="off">
+          </label>
+          <label class="full" for="fTitle">Naam (khali chhodo to kism ka naam lagega)
+            <input id="fTitle" type="text" placeholder="Jaise: Iqama, Class 10 marksheet" autocomplete="off">
+          </label>
+          <label for="fDate">Khatam hone ki tareekh (zaruri nahi)
+            <input id="fDate" type="date">
+          </label>
+          <label for="fFiles">Photo (front/back, 6 tak)
+            <input id="fFiles" type="file" accept="image/*" multiple>
+          </label>
+          <label class="full" for="fNotes">Yaad ke liye note
+            <textarea id="fNotes" placeholder="Number, kahan rakha hai, kis office se mila..."></textarea>
+          </label>
+        </div>
+        <div class="actions" style="margin-top:12px">
+          <button class="btn" id="saveBtn" type="submit">Save karo</button>
+          <span class="formmsg" id="formMsg" aria-live="polite"></span>
+        </div>
+      </form>
+
+      <div class="chips" id="chips" aria-label="Kism se chhaanto"></div>
+      <div class="small muted" id="count"></div>
+      <div class="list" id="docList"></div>
+
+      <div class="actions">
+        <button class="btn ghost" id="copyBtn" type="button">WhatsApp ke liye tareekh ki list copy karo</button>
+      </div>
+      <textarea id="copyBox" readonly hidden aria-label="Copy ki gayi list"></textarea>
+
+      <p class="note" id="storeNote"></p>
+
+      <div class="panel">
+        <h2>Gulf mein madad ke raaste</h2>
+        <ul class="links">
+          <li><a href="https://madad.gov.in" target="_blank" rel="noopener">MADAD</a> <span class="muted small">Bharat sarkar ka consular shikayat aur madad portal.</span></li>
+          <li><a href="https://emigrate.gov.in" target="_blank" rel="noopener">e-Migrate</a> <span class="muted small">Kaam ke liye jaane se pehle agent aur offer ki jaanch.</span></li>
+          <li><a href="https://www.absher.sa" target="_blank" rel="noopener">Absher</a> <span class="muted small">Saudi mein iqama aur visa ki asli tareekh yahin dekho.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="paneSch" role="tabpanel" aria-labelledby="tabSch" hidden>
+      <div>
+        <h2>Aap kin yojnaon ke liye ho sakte ho?</h2>
+        <p class="sub">Apni jaankari bharo. Yeh sirf andaza hai, jaankari aapke phone se bahar nahi jaati.</p>
+      </div>
+      <form class="panel" id="schForm">
+        <div class="formgrid">
+          <label for="sAge">Umr
+            <input id="sAge" type="number" inputmode="numeric" min="1" max="110" value="22">
+          </label>
+          <label for="sGender">Mahila / Purush
+            <select id="sGender"><option value="M">Purush</option><option value="F">Mahila</option></select>
+          </label>
+          <label for="sIncome">Parivar ki saalana aamdani
+            <select id="sIncome">
+              <option value="0">1 lakh se kam</option>
+              <option value="1" selected>1 se 2.5 lakh</option>
+              <option value="2">2.5 se 6 lakh</option>
+              <option value="3">6 lakh se zyada</option>
+            </select>
+          </label>
+          <label for="sComm">Samudaay / category
+            <select id="sComm">
+              <option value="minority" selected>Muslim ya doosra alpsankhyak</option>
+              <option value="sc_st">SC / ST</option>
+              <option value="obc">OBC</option>
+              <option value="gen">General</option>
+            </select>
+          </label>
+          <label class="full" for="sOcc">Aap kya karte ho
+            <select id="sOcc">
+              <option value="student" selected>Student</option>
+              <option value="kisan">Kisan (zameen hai)</option>
+              <option value="karigar">Kaarigar / hunar ka kaam</option>
+              <option value="karobari">Chhota karobar</option>
+              <option value="naukri">Naukri / mazdoori</option>
+              <option value="ghar">Ghar sambhalti hoon / sambhalta hoon</option>
+              <option value="retired">Retire</option>
+            </select>
+          </label>
+          <label class="checkrow full" for="sNoHouse"><input id="sNoHouse" type="checkbox"> Mere parivar ka apna pakka ghar nahi hai</label>
+        </div>
+        <div class="actions" style="margin-top:12px"><button class="btn" type="submit">Yojnayein dikhao</button></div>
+      </form>
+
+      <div class="small muted" id="schHead" aria-live="polite"></div>
+      <div class="schemes" id="schemeList"></div>
+      <p class="note">Rules badalte rehte hain, isliye aakhri faisla hamesha sarkari portal par dekho. Yojna mein shamil karne ke naam par bada paisa maangne wale agent se savdhan raho.</p>
+    </section>
+  </main>
+</div>
+
+<div id="viewer" hidden role="dialog" aria-modal="true" aria-label="Photo dekho">
+  <div class="vbar">
+    <span id="vCap"></span>
+    <button class="btn" id="vClose" type="button">Band karo</button>
+  </div>
+  <div class="stage"><img id="vImg" alt="Kaagaz ki photo"></div>
+  <div class="vbar">
+    <button class="btn" id="vPrev" type="button">Pichhli</button>
+    <span id="vPos"></span>
+    <button class="btn" id="vNext" type="button">Agli</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var TYPES = {
+    iqama:{name:'Iqama / Residency ID',code:'IQM'},
+    passport:{name:'Passport',code:'PPT'},
+    visa:{name:'Visa / Exit-Re-entry',code:'VSA'},
+    dl:{name:'Driving License',code:'DL'},
+    ins:{name:'Bima (Insurance)',code:'INS'},
+    aadhaar:{name:'Aadhaar',code:'AAD'},
+    pan:{name:'PAN card',code:'PAN'},
+    edu:{name:'Marksheet / Degree',code:'EDU'},
+    cert:{name:'Janm / Nikah / Domicile certificate',code:'CRT'},
+    med:{name:'Medical report',code:'MED'},
+    other:{name:'Doosra kaagaz',code:'DOC'}
+  };
+
+  /* ---------- helpers ---------- */
+  function $(id){return document.getElementById(id);}
+  function h(tag, props){
+    var e=document.createElement(tag);
+    if(props){for(var k in props){
+      if(k==='class') e.className=props[k];
+      else if(k==='text') e.textContent=props[k];
+      else if(k.indexOf('on')===0) e.addEventListener(k.slice(2),props[k]);
+      else e.setAttribute(k,props[k]);
+    }}
+    for(var i=2;i<arguments.length;i++){
+      var c=arguments[i];
+      if(c==null||c===false) continue;
+      if(Array.isArray(c)){c.forEach(function(x){if(x) e.append(x.nodeType?x:document.createTextNode(x));});}
+      else e.append(c.nodeType?c:document.createTextNode(c));
+    }
+    return e;
+  }
+  function todayUTC(){var d=new Date();return Date.UTC(d.getFullYear(),d.getMonth(),d.getDate());}
+  function parseISO(s){var p=s.split('-').map(Number);return Date.UTC(p[0],p[1]-1,p[2]);}
+  function daysLeft(s){return Math.round((parseISO(s)-todayUTC())/864e5);}
+  function isoOffset(n){return new Date(todayUTC()+n*864e5).toISOString().slice(0,10);}
+  function fmt(s){return new Date(parseISO(s)).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});}
+  function hijri(s){
+    try{return new Intl.DateTimeFormat('en-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(parseISO(s)));}
+    catch(e){return '';}
+  }
+  function status(n){
+    if(n<0) return {k:'bad',t:'Expire ho gaya'};
+    if(n<=30) return {k:'bad',t:'30 din ke andar'};
+    if(n<=90) return {k:'warn',t:'90 din ke andar'};
+    return {k:'ok',t:'Theek hai'};
+  }
+  function daysText(n){
+    if(n<0) return {big:String(-n),small:'din pehle'};
+    if(n===0) return {big:'Aaj',small:'khatam'};
+    return {big:String(n),small:'din baaki'};
+  }
+  function mb(bytes){return (bytes/1048576).toFixed(1);}
+
+  /* ---------- storage (IndexedDB, photos stay in this browser) ---------- */
+  var dbp=null, volatile=false;
+  function openDB(){
+    if(dbp) return dbp;
+    dbp=new Promise(function(res,rej){
+      try{
+        var r=indexedDB.open('parvaaz',1);
+        r.onupgradeneeded=function(){r.result.createObjectStore('docs',{keyPath:'id'});};
+        r.onsuccess=function(){res(r.result);};
+        r.onerror=function(){rej(r.error);};
+        r.onblocked=function(){rej(new Error('blocked'));};
+      }catch(e){rej(e);}
+    });
+    return dbp;
+  }
+  function tx(mode,fn){
+    return openDB().then(function(db){
+      return new Promise(function(res,rej){
+        var t=db.transaction('docs',mode), req=fn(t.objectStore('docs'));
+        t.oncomplete=function(){res(req&&req.result);};
+        t.onerror=function(){rej(t.error);};
+        t.onabort=function(){rej(t.error);};
+      });
+    });
+  }
+  function dbAll(){return tx('readonly',function(s){return s.getAll();});}
+  function dbPut(d){return tx('readwrite',function(s){return s.put(d);});}
+  function dbDel(id){return tx('readwrite',function(s){return s.delete(id);});}
+
+  /* ---------- state ---------- */
+  var docs=[], query='', typeFilter='all', lastShown=[];
+  var urlCache=new WeakMap();
+  function urlFor(b){var u=urlCache.get(b);if(!u){u=URL.createObjectURL(b);urlCache.set(b,u);}return u;}
+
+  function sampleDocs(){return [
+    {id:'s1',type:'iqama',title:'Iqama',holder:'Main',date:isoOffset(18),notes:'',images:[],sample:true},
+    {id:'s2',type:'ins',title:'Medical bima',holder:'Main',date:isoOffset(-3),notes:'Company ke HR se naya card lena hai.',images:[],sample:true},
+    {id:'s3',type:'dl',title:'Driving License',holder:'Main',date:isoOffset(75),notes:'',images:[],sample:true},
+    {id:'s4',type:'passport',title:'Passport',holder:'Main',date:isoOffset(412),notes:'Mumbai se banwaya tha.',images:[],sample:true},
+    {id:'s5',type:'edu',title:'Fazilat marksheet',holder:'Main',date:'',notes:'Asli kaagaz ghar par almari mein.',images:[],sample:true}
+  ];}
+  function current(){return docs.length?docs:sampleDocs();}
+
+  /* ---------- documents tab ---------- */
+  function matches(d){
+    if(typeFilter!=='all' && d.type!==typeFilter) return false;
+    if(!query) return true;
+    var hay=[d.title,TYPES[d.type].name,d.holder,d.notes,d.date?fmt(d.date):'',d.date?hijri(d.date):''].join(' ').toLowerCase();
+    return query.toLowerCase().split(/\s+/).filter(Boolean).every(function(w){return hay.indexOf(w)!==-1;});
+  }
+  function sortDocs(a,b){
+    if(a.date&&b.date) return parseISO(a.date)-parseISO(b.date);
+    if(a.date) return -1;
+    if(b.date) return 1;
+    return (a.title||'').localeCompare(b.title||'');
+  }
+
+  function renderStrip(all){
+    var bad=0,warn=0,ok=0;
+    all.forEach(function(d){
+      if(!d.date) return;
+      var n=daysLeft(d.date);
+      if(n<=30) bad++; else if(n<=90) warn++; else ok++;
+    });
+    $('strip').replaceChildren(
+      h('div',{class:'bad'},h('b',{text:String(bad)}),h('span',{text:'Expire / 30 din'})),
+      h('div',{class:'warn'},h('b',{text:String(warn)}),h('span',{text:'90 din ke andar'})),
+      h('div',{class:'ok'},h('b',{text:String(ok)}),h('span',{text:'Theek hai'}))
+    );
+  }
+
+  function renderChips(all){
+    var used=[];
+    all.forEach(function(d){if(used.indexOf(d.type)===-1) used.push(d.type);});
+    if(typeFilter!=='all' && used.indexOf(typeFilter)===-1) typeFilter='all';
+    var box=$('chips'); box.replaceChildren();
+    function chip(key,label){
+      box.append(h('button',{type:'button','aria-pressed':String(typeFilter===key),text:label,onclick:function(){typeFilter=key;render();}}));
+    }
+    chip('all','Sab');
+    used.forEach(function(k){chip(k,TYPES[k].name.split(' / ')[0]);});
+  }
+
+  function row(d){
+    var t=TYPES[d.type];
+    var info=h('div',{class:'info'});
+    info.append(h('h3',{text:d.title||t.name}));
+    info.append(h('div',{class:'meta',text:(d.holder?d.holder+' · ':'')+t.name}));
+    var days=null;
+    if(d.date){
+      var n=daysLeft(d.date), st=status(n), dt=daysText(n);
+      info.append(h('div',{class:'meta',text:'Khatam: '+fmt(d.date)}));
+      var hj=hijri(d.date);
+      if(hj) info.append(h('div',{class:'hijri',text:'Hijri: '+hj}));
+      info.append(h('span',{class:'pill '+st.k,text:st.t}));
+      days=h('div',{class:'days '+st.k},h('b',{text:dt.big}),h('small',{text:dt.small}));
+    }
+    if(d.notes) info.append(h('div',{class:'notes',text:d.notes}));
+    if(d.sample) info.append(h('span',{class:'tag',text:'NAMUNA'}));
+    if(d.images&&d.images.length){
+      var th=h('div',{class:'thumbs'});
+      d.images.forEach(function(b,i){
+        th.append(h('button',{class:'thumb',type:'button','aria-label':'Photo '+(i+1)+' dekho',onclick:function(){openViewer(d,i);}},
+          h('img',{src:urlFor(b),alt:'',loading:'lazy'})));
+      });
+      info.append(th);
+    }
+    if(!d.sample){
+      info.append(h('button',{class:'linkbtn',type:'button',text:'Hatao',onclick:function(){removeDoc(d);}}));
+    }
+    return h('div',{class:'row'},h('div',{class:'code',text:t.code}),info,days);
+  }
+
+  function render(){
+    var all=current();
+    renderStrip(all);
+    renderChips(all);
+    var shown=all.filter(matches).sort(sortDocs);
+    lastShown=shown;
+    var list=$('docList'); list.replaceChildren();
+    if(!shown.length){
+      list.append(h('div',{class:'empty',text:docs.length?'Is naam ka koi kaagaz nahi mila. Spelling badal kar dekho.':'Abhi koi kaagaz nahi hai. "+ Naya kaagaz" se pehla jodo.'}));
+    } else shown.forEach(function(d){list.append(row(d));});
+    var photos=0,bytes=0;
+    docs.forEach(function(d){(d.images||[]).forEach(function(b){photos++;bytes+=b.size||0;});});
+    var c=docs.length?(query||typeFilter!=='all'?shown.length+' mile, kul ':'')+docs.length+' kaagaz, '+photos+' photo ('+mb(bytes)+' MB)':'Neeche namune ke kaagzaat hain. Apna pehla kaagaz jodte hi yeh hat jaayenge.';
+    $('count').textContent=c;
+    $('storeNote').textContent=volatile
+      ?'Is browser mein photo save nahi ho sakti. Page band karte hi jaankari chali jaayegi.'
+      :'Photo aur jaankari sirf is browser mein rehti hai, kahin upload nahi hoti. Browser ka data saaf karne ya phone badalne par chali jaayegi, isliye asli kaagzaat ki alag copy bhi rakho.';
+  }
+
+  function removeDoc(d){
+    docs=docs.filter(function(x){return x.id!==d.id;});
+    (d.images||[]).forEach(function(b){var u=urlCache.get(b);if(u){URL.revokeObjectURL(u);urlCache.delete(b);}});
+    dbDel(d.id).catch(function(){});
+    render();
+  }
+
+  /* ---------- add form ---------- */
+  var typeSel=$('fType');
+  Object.keys(TYPES).forEach(function(k){typeSel.append(h('option',{value:k,text:TYPES[k].name}));});
+
+  $('toggleAdd').addEventListener('click',function(){
+    var p=$('addPanel'); p.hidden=!p.hidden;
+    this.setAttribute('aria-expanded',String(!p.hidden));
+    if(!p.hidden) $('fTitle').focus();
+  });
+
+  function shrink(file){
+    return createImageBitmap(file).then(function(bmp){
+      var max=1600, sc=Math.min(1,max/Math.max(bmp.width,bmp.height));
+      var c=document.createElement('canvas');
+      c.width=Math.max(1,Math.round(bmp.width*sc)); c.height=Math.max(1,Math.round(bmp.height*sc));
+      var x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(bmp,0,0,c.width,c.height);
+      return new Promise(function(r){c.toBlob(function(b){r(b||file);},'image/jpeg',0.82);});
+    }).catch(function(){return file;});
+  }
+  function msg(t,err){var m=$('formMsg');m.textContent=t;m.className='formmsg'+(err?' err':'');}
+
+  $('addPanel').addEventListener('submit',function(ev){
+    ev.preventDefault();
+    var files=Array.prototype.slice.call($('fFiles').files||[]).filter(function(f){return /^image\//.test(f.type);}).slice(0,6);
+    var btn=$('saveBtn'); btn.disabled=true; msg('Save ho raha hai...');
+    Promise.all(files.map(shrink)).then(function(blobs){
+      var rec={
+        id:'d'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+        type:$('fType').value, title:$('fTitle').value.trim(), holder:$('fHolder').value.trim(),
+        date:$('fDate').value, notes:$('fNotes').value.trim(), images:blobs, created:Date.now()
+      };
+      docs.push(rec);
+      render();
+      try{ if(navigator.storage&&navigator.storage.persist) navigator.storage.persist(); }catch(e){}
+      return dbPut(rec).catch(function(){volatile=true;render();});
+    }).then(function(){
+      $('addPanel').reset(); msg('Save ho gaya.');
+    }).catch(function(){msg('Save nahi ho paya. Dobara koshish karo.',true);})
+    .then(function(){btn.disabled=false;});
+  });
+
+  $('q').addEventListener('input',function(){query=this.value.trim();render();});
+
+  /* ---------- copy list ---------- */
+  $('copyBtn').addEventListener('click',function(){
+    var lines=current().filter(function(d){return d.date&&daysLeft(d.date)<=90;}).sort(sortDocs).map(function(d){
+      var n=daysLeft(d.date);
+      return (d.title||TYPES[d.type].name)+(d.holder?' ('+d.holder+')':'')+': '+fmt(d.date)+(n<0?' (expire ho gaya)':' ('+n+' din baaki)');
+    });
+    var text=lines.length?'Tareekh ki yaad:\n'+lines.join('\n'):'90 din ke andar koi kaagaz khatam nahi ho raha.';
+    var box=$('copyBox');
+    function fallback(){box.value=text;box.hidden=false;box.focus();box.select();}
+    try{
+      navigator.clipboard.writeText(text).then(function(){
+        box.hidden=true;$('copyBtn').textContent='Copy ho gaya';
+        setTimeout(function(){$('copyBtn').textContent='WhatsApp ke liye tareekh ki list copy karo';},1800);
+      },fallback);
+    }catch(e){fallback();}
+  });
+
+  /* ---------- photo viewer ---------- */
+  var vDoc=null,vIdx=0;
+  function showV(){
+    var imgs=vDoc.images;
+    $('vImg').src=urlFor(imgs[vIdx]);
+    $('vCap').textContent=vDoc.title||TYPES[vDoc.type].name;
+    $('vPos').textContent=(vIdx+1)+' / '+imgs.length;
+    $('vPrev').hidden=$('vNext').hidden=imgs.length<2;
+  }
+  function openViewer(d,i){vDoc=d;vIdx=i;$('viewer').hidden=false;showV();$('vClose').focus();}
+  function closeViewer(){$('viewer').hidden=true;$('vImg').removeAttribute('src');}
+  $('vClose').addEventListener('click',closeViewer);
+  $('vPrev').addEventListener('click',function(){vIdx=(vIdx+vDoc.images.length-1)%vDoc.images.length;showV();});
+  $('vNext').addEventListener('click',function(){vIdx=(vIdx+1)%vDoc.images.length;showV();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('viewer').hidden) closeViewer();});
+
+  /* ---------- tabs ---------- */
+  function setTab(which){
+    var d=which==='docs';
+    $('tabDocs').setAttribute('aria-selected',String(d));
+    $('tabSch').setAttribute('aria-selected',String(!d));
+    $('paneDocs').hidden=!d; $('paneSch').hidden=d;
+  }
+  $('tabDocs').addEventListener('click',function(){setTab('docs');});
+  $('tabSch').addEventListener('click',function(){setTab('sch');});
+
+  /* ---------- schemes tab ---------- */
+  var SCHEMES=[
+    {id:'minsch',name:'Alpsankhyak scholarship (Pre/Post-matric, Merit-cum-Means)',
+     benefit:'Padhai ke kharch mein sarkari madad, class aur course ke hisaab se.',
+     docs:['Aadhaar','Pichhli class ki marksheet (kam se kam 50% number)','Aamdani ka praman-patra','Bank khata','School ya college ka praman'],
+     link:'https://scholarships.gov.in',
+     test:function(p){return p.occ==='student'&&p.comm==='minority'&&p.income<=1?{lv:2,why:'Student, alpsankhyak samudaay, aamdani 2.5 lakh se kam. Class ke hisaab se limit 1 se 2.5 lakh hai.'}:null;}},
+    {id:'ccsch',name:'SC / ST / OBC scholarship',
+     benefit:'Fees aur padhai ke kharch mein sarkari madad.',
+     docs:['Aadhaar','Jaati praman-patra','Aamdani ka praman-patra','Pichhli class ki marksheet','Bank khata'],
+     link:'https://scholarships.gov.in',
+     test:function(p){return p.occ==='student'&&(p.comm==='sc_st'||p.comm==='obc')&&p.income<=1?{lv:2,why:'Student, aapki category ke liye scholarship, aamdani 2.5 lakh se kam.'}:null;}},
+    {id:'pmjay',name:'Ayushman Bharat (PM-JAY)',
+     benefit:'Parivar ko saal mein Rs 5 lakh tak ka muft ilaaj, jude hue aspatalon mein.',
+     docs:['Aadhaar','Ration card','Parivar ke naam ki list'],
+     link:'https://pmjay.gov.in',
+     test:function(p){
+       if(p.age>=70) return {lv:2,why:'70 saal ya usse upar ke liye aamdani ki shart nahi.'};
+       if(p.income<=1) return {lv:1,why:'Kam aamdani wale parivar. Naam sarkari list mein hona zaruri hai, portal par check karo.'};
+       return null;}},
+    {id:'pmkisan',name:'PM Kisan Samman Nidhi',
+     benefit:'Saal mein Rs 6,000, teen kiston mein seedha bank khate mein.',
+     docs:['Aadhaar','Zameen ke kagaz','Bank khata (Aadhaar se juda)'],
+     link:'https://pmkisan.gov.in',
+     test:function(p){return p.occ==='kisan'?{lv:2,why:'Kisan parivar jiske naam zameen ho.'}:null;}},
+    {id:'pmay',name:'Pradhan Mantri Awas Yojana',
+     benefit:'Pakka ghar banane ya kharidne mein sarkari madad.',
+     docs:['Aadhaar','Aamdani ka praman-patra','Bank khata','Zameen ya kiraye ke kagaz'],
+     link:'https://pmay-urban.gov.in',
+     test:function(p){return p.noHouse&&p.income<=2?{lv:p.income<=1?2:1,why:'Apna pakka ghar nahi hai aur aamdani 6 lakh se kam.'}:null;}},
+    {id:'pmuy',name:'PM Ujjwala Yojana',
+     benefit:'Garib parivar ki mahila ko muft LPG connection.',
+     docs:['Aadhaar','Ration card','Bank khata','BPL ka praman'],
+     link:'https://pmuy.gov.in',
+     test:function(p){return p.gender==='F'&&p.age>=18&&p.income<=1?{lv:p.income===0?2:1,why:'18 saal se badi mahila, kam aamdani wala parivar.'}:null;}},
+    {id:'apy',name:'Atal Pension Yojana',
+     benefit:'60 saal ke baad tay pension, Rs 1,000 se 5,000 mahina, jitna chuno.',
+     docs:['Aadhaar','Bank khata','Mobile number'],
+     link:'https://www.jansuraksha.gov.in',
+     test:function(p){return p.age>=18&&p.age<=40?{lv:2,why:'Umr 18 se 40 ke beech hai.'}:null;}},
+    {id:'bima',name:'PM Suraksha Bima aur Jeevan Jyoti Bima',
+     benefit:'Haadse aur jaan ka sasta bima, premium bank khate se kat'+'ta hai.',
+     docs:['Aadhaar','Bank khata'],
+     link:'https://www.jansuraksha.gov.in',
+     test:function(p){return p.age>=18&&p.age<=70?{lv:2,why:'Umr 18 se 70 ke beech hai. Jeevan Jyoti 50 saal tak ke liye hai.'}:null;}},
+    {id:'vishwa',name:'PM Vishwakarma',
+     benefit:'Kaarigaron ko training, toolkit madad aur kam byaj par loan.',
+     docs:['Aadhaar','Bank khata','Mobile number','Hunar ka praman ya gaanv/mohalle ki pehchaan'],
+     link:'https://pmvishwakarma.gov.in',
+     test:function(p){return p.occ==='karigar'&&p.age>=18?{lv:2,why:'Hunar ka kaam karte ho aur umr 18 se upar hai.'}:null;}},
+    {id:'mudra',name:'Mudra loan',
+     benefit:'Chhote karobar ke liye bina guarantee ka loan.',
+     docs:['Aadhaar','PAN','Karobar ka pata ya kaam ka saboot','Bank khata'],
+     link:'https://www.mudra.org.in',
+     test:function(p){return p.occ==='karobari'&&p.age>=18?{lv:2,why:'Chhota karobar chalate ho.'}:null;}}
+  ];
+
+  function readProfile(){
+    return {age:parseInt($('sAge').value,10)||0,gender:$('sGender').value,income:parseInt($('sIncome').value,10),
+      comm:$('sComm').value,occ:$('sOcc').value,noHouse:$('sNoHouse').checked};
+  }
+  function renderSchemes(auto){
+    var p=readProfile(), out=[];
+    SCHEMES.forEach(function(s){var r=s.test(p);if(r) out.push({s:s,r:r});});
+    out.sort(function(a,b){return b.r.lv-a.r.lv;});
+    $('schHead').textContent=(auto?'Namuna jawab, upar bhari hui jaankari ke hisaab se: ':'')+out.length+' yojnayein mil sakti hain.';
+    var box=$('schemeList'); box.replaceChildren();
+    if(!out.length){box.append(h('div',{class:'empty',text:'Is jaankari par koi yojna nahi mili. Umr, aamdani ya kaam badal kar dekho.'}));return;}
+    out.forEach(function(o){
+      var lv=o.r.lv===2?h('span',{class:'pill ok',text:'Zyada sambhavna'}):h('span',{class:'pill warn',text:'Check karo'});
+      box.append(h('article',{class:'scheme'},
+        lv,
+        h('h3',{text:o.s.name}),
+        h('div',{text:o.s.benefit}),
+        h('div',{class:'why',text:'Kyun: '+o.r.why}),
+        h('details',{},h('summary',{text:'Kaunse kagaz lagenge'}),h('ul',{},o.s.docs.map(function(d){return h('li',{text:d});}))),
+        h('a',{href:o.s.link,target:'_blank',rel:'noopener',text:'Sarkari portal kholo'})
+      ));
+    });
+  }
+  $('schForm').addEventListener('submit',function(e){e.preventDefault();renderSchemes(false);});
+
+  /* ---------- start ---------- */
+  render();
+  renderSchemes(true);
+  dbAll().then(function(rows){docs=rows||[];}).catch(function(){volatile=true;}).then(render);
+})();
+</script>

@@ -66,7 +66,7 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .small{font-size:13px}
 
 .tabbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px}
-.tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:var(--line);border-radius:10px}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;background:var(--line);border-radius:10px}
 .tabs button{font:600 15px var(--f-body);color:var(--ink);background:transparent;border:0;border-radius:7px;padding:10px 8px;min-height:44px;cursor:pointer}
 .tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -226,6 +226,24 @@ html.splash .install,html.locked .install{display:none}
 .instbtns .btn{width:100%}
 .backdrop{position:fixed;inset:0;z-index:39;background:rgba(7,25,43,.5);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 html.splash .backdrop,html.locked .backdrop{display:none}
+.gd{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.gd+.gd{margin-top:8px}
+.gd summary{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;font-weight:600;cursor:pointer;list-style:none;min-height:48px}
+.gd summary::-webkit-details-marker{display:none}
+.gd summary::after{content:"+";font-size:20px;color:var(--accent);margin-left:auto}
+.gd[open] summary::after{content:"\2212"}
+.gd .have{font-size:12px;font-weight:600;color:var(--ok);background:var(--ok-bg);border-radius:999px;padding:2px 10px}
+.gdb{padding:0 16px 16px;display:flex;flex-direction:column;gap:6px;font-size:15px}
+.gdb h4{margin:8px 0 0;font-size:13px;color:var(--accent);text-transform:uppercase;letter-spacing:.04em}
+.gdb ul{margin:0;padding-left:20px}.gdb li{margin:2px 0}
+.gdb .tip{background:var(--warn-bg);color:var(--warn);border-radius:10px;padding:8px 12px;font-size:14px;margin:8px 0 0}
+.gdb a{color:var(--accent);font-weight:600}
+.gh{margin:20px 0 8px;font-size:18px}
+.ck{display:flex;align-items:center;gap:12px;padding:10px 4px;min-height:44px;font-size:15px}
+.ck input{width:22px;height:22px;min-height:22px;flex:none;accent-color:var(--accent)}
+.ck small{color:var(--ok);font-weight:600;margin-left:auto}
+.gprog{height:8px;border-radius:8px;background:var(--line);overflow:hidden;margin:6px 0 12px}
+.gprog i{display:block;height:100%;background:var(--accent);border-radius:8px}
 </style>
 <script>try{if(localStorage.getItem('al.pin'))document.documentElement.classList.add('locked')}catch(e){}try{if(!sessionStorage.getItem('al.splash'))document.documentElement.classList.add('splash')}catch(e){}</script>
 </head>
@@ -250,7 +268,8 @@ html.splash .backdrop,html.locked .backdrop{display:none}
   <div class="tabbar">
     <div class="tabs" role="tablist" aria-label="Hisse">
       <button id="tabDocs" role="tab" aria-selected="true" aria-controls="paneDocs">Kaagzaat</button>
-      <button id="tabSch" role="tab" aria-selected="false" aria-controls="paneSch">Sarkari Yojnayein</button>
+      <button id="tabGuide" role="tab" aria-selected="false" aria-controls="paneGuide">Guide</button>
+      <button id="tabSch" role="tab" aria-selected="false" aria-controls="paneSch">Yojnayein</button>
     </div>
   </div>
 
@@ -377,6 +396,8 @@ html.splash .backdrop,html.locked .backdrop{display:none}
         </ul>
       </div>
     </section>
+
+    <section id="paneGuide" role="tabpanel" aria-labelledby="tabGuide" hidden><div id="guideBox"></div></section>
 
     <section id="paneSch" role="tabpanel" aria-labelledby="tabSch" hidden>
       <p class="note" style="border-top:0;padding-top:0">Ye list sirf madad ke liye hai, sarkari app nahi. Yojna ki sahi aur taaza jaankari hamesha sarkari site par dekho.</p>
@@ -804,13 +825,73 @@ html.splash .backdrop,html.locked .backdrop{display:none}
 
   /* ---------- tabs ---------- */
   function setTab(which){
-    var d=which==='docs';
-    $('tabDocs').setAttribute('aria-selected',String(d));
-    $('tabSch').setAttribute('aria-selected',String(!d));
-    $('paneDocs').hidden=!d; $('paneSch').hidden=d;
+    var m={docs:['tabDocs','paneDocs'],guide:['tabGuide','paneGuide'],sch:['tabSch','paneSch']};
+    Object.keys(m).forEach(function(k){$(m[k][0]).setAttribute('aria-selected',String(k===which));$(m[k][1]).hidden=(k!==which);});
+    if(which==='guide')renderGuide();
   }
   $('tabDocs').addEventListener('click',function(){setTab('docs');});
+  $('tabGuide').addEventListener('click',function(){setTab('guide');});
   $('tabSch').addEventListener('click',function(){setTab('sch');});
+
+  /* ---------- guide tab: kaunsa kaam, kaun se kaagaz ---------- */
+  var GUIDE=[
+   {n:'Passport (naya)',t:'passport',s:[['Pehchan (photo wala, ek)',['Aadhaar, Voter ID, PAN ya Driving License']],['Address (ek)',['Aadhaar, bijli/paani/gas bill, bank passbook, rent agreement']],['Janm tareekh (ek)',['Birth certificate, 10th marksheet ya school leaving certificate, PAN, Aadhaar','1 October 2023 ke baad paida hue logon ke liye sirf birth certificate chalta hai']],['Bachche ke liye',['Birth certificate, maa-baap ke passport ki copy, maa-baap ka address proof, dono ki ijazat wala form']]],tip:'Asli kaagaz aur self-attested photocopy Passport Seva Kendra le jao. Sab kaagaz par naam, address aur janm tareekh ek jaisi honi chahiye.',l:'https://www.passportindia.gov.in'},
+   {n:'Driving License',t:'dl',s:[['Learner (LL) ke liye',['Form 2 (application) aur Form 1 (sehat ka ghoshna-patra)','Age proof: birth certificate, 10th marksheet, passport ya PAN','Address proof: Aadhaar, passport, voter ID, bijli bill ya rent agreement','Passport size photo']],['Pakka license ke liye',['Asli Learner License (test kam se kam 30 din baad)','Upar wale hi age aur address proof']],['Kab Form 1A (doctor ka medical)',['Commercial gaadi (taxi, truck, bus) ke liye, aur kuch cases me badi umar par']],['Renewal',['Purana license, photo, fees. Time par karwao, der par test dobara dena pad sakta hai']]],tip:'Zyadatar kaam online hota hai. State ke hisaab se thoda farak ho sakta hai.',l:'https://parivahan.gov.in'},
+   {n:'Aadhaar',t:'aadhaar',s:[['Naya banwane ke liye',['Pehchan ka praman, address ka praman, janm tareekh ka praman (passport, voter ID, birth certificate, marksheet jaise)']],['Bachche ke liye',['Birth certificate aur maa ya baap ka Aadhaar']],['Naam ya address badalna',['Naya praman jisme badla hua naam ya address ho','Online badalne ke liye mobile number Aadhaar se juda hona chahiye']]],tip:'Aadhaar ki copy kisi ko dene se pehle masked copy (aakhri 4 ank) use karo.',l:'https://uidai.gov.in'},
+   {n:'PAN card',t:'pan',s:[['Naya PAN',['Pehchan, address aur janm tareekh ka praman (Aadhaar, passport, voter ID, DL ya birth certificate)','Photo aur signature']],['Jaldi wala tareeqa',['Mobile Aadhaar se juda ho to online e-KYC se turant e-PAN mil sakta hai']]],tip:'Naam aur janm tareekh Aadhaar se bilkul milni chahiye, nahi to PAN me galti aati hai.',l:'https://www.incometax.gov.in'},
+   {n:'Voter ID',t:null,s:[['18 saal ya zyada umar ke liye (Form 6)',['Age proof: birth certificate, 10th marksheet ya passport','Address proof: Aadhaar, bill, bank passbook ya passport','Passport size photo']]],tip:'Pehle se naam list me hai ya nahi, voters portal par check kar lo.',l:'https://voters.eci.gov.in'},
+   {n:'Birth certificate',t:'cert',s:[['Lagne wale kaagaz',['Aspatal ki birth slip ya discharge paper','Maa-baap ke ID (Aadhaar)','Maa-baap ke shaadi ka praman (kuch jagah)']]],tip:'Janm ke baad jitni jaldi banwaoge utna aasaan. Der se banwane par extra kaagaz aur fees lag sakti hain.',l:'https://crsorgi.gov.in'},
+   {n:'Shaadi ka praman-patra',t:'cert',s:[['Dono ke liye',['Pehchan, address aur janm tareekh ka praman','Shaadi ka card ya shaadi ki photos','2 se 3 gawah ke ID','Shaadi ka affidavit (kuch jagah)']]],tip:'Niyam state aur dharm ke hisaab se alag hote hain. Apne district ke registrar office se puchh lo.',l:''},
+   {n:'Domicile / Aamdani / Jaati praman-patra',t:'cert',s:[['Aam taur par',['Aadhaar aur address proof','Ration card ya parivaar ki list','Affidavit (kai states me)','Aamdani ke liye: salary slip ya ITR. Jaati ke liye: maa-baap ka jaati praman-patra']]],tip:'Ye state ke e-District ya Seva Kendra portal se banta hai. Kaagaz state ke hisaab se badalte hain.',l:''},
+   {n:'Bank khata (KYC)',t:null,s:[['Khata kholne ke liye',['Aadhaar','PAN (ya Form 60)','Address proof','Passport size photo']]],tip:'Bank ke hisaab se thoda alag ho sakta hai.',l:''},
+   {n:'Bima (insurance) lene ke liye',t:'ins',s:[['Aam taur par',['Pehchan, address aur umar ka praman','Photo','Health ya life bima me purani medical reports ya medical test']],['Claim ke waqt',['Policy ki copy, ID, bills aur discharge summary']]],tip:'Policy ka number aur company ka helpline number hamesha alag se likh kar rakho.',l:''}
+  ];
+  var ESS=[
+   ['Pehchan',[['aadhaar','Aadhaar','aadhaar'],['pan','PAN card','pan'],['passport','Passport','passport'],['voter','Voter ID',null],['dl','Driving License','dl']]],
+   ['Janm aur parivaar',[['birth','Birth certificate',null],['marr','Shaadi ka praman-patra',null],['dom','Domicile / aamdani / jaati praman-patra',null]]],
+   ['Padhai',[['edu','10th, 12th marksheet aur degree','edu']]],
+   ['Paisa',[['bank','Bank passbook ya cheque ki copy',null],['itr','ITR aur Form 16 (pichhle 3 saal)',null],['loan','Loan ya EMI ke kaagaz',null]]],
+   ['Ghar aur gaadi',[['prop','Ghar ke kaagaz (registry, rent agreement)',null],['rc','Gaadi ki RC',null],['vins','Gaadi ka bima aur PUC',null]]],
+   ['Sehat',[['ins','Bima policy (health ya life)','ins'],['med','Medical reports','med'],['vacc','Vaccination card',null]]],
+   ['Zaroori extra',[['photo','2 se 4 passport size photo',null],['nom','Nominee ki jaankari aur zaroori phone number',null]]]
+  ];
+  function haveType(t){return !!t&&docs.some(function(d){return !d.sample&&d.type===t;});}
+  function chkGet(){try{return JSON.parse(localStorage.getItem('al.chk')||'{}')||{};}catch(e){return {};}}
+  function renderGuide(){
+    var box=$('guideBox'),chk=chkGet();box.replaceChildren();
+    box.append(h('p',{class:'note',style:'border-top:0;padding-top:0',text:'India ke hisaab se aam jaankari. State, office aur waqt ke hisaab se kaagaz badal sakte hain, isliye aakhri baat ke liye sarkari site dekho.'}));
+    box.append(h('h2',{class:'gh',text:'Kaunsa kaam, kaun se kaagaz'}));
+    GUIDE.forEach(function(g){
+      var sm=h('summary',{},h('span',{text:g.n}));
+      if(haveType(g.t)) sm.append(h('span',{class:'have',text:'Save hai'}));
+      var body=h('div',{class:'gdb'});
+      g.s.forEach(function(sec){
+        body.append(h('h4',{text:sec[0]}));
+        var ul=h('ul');sec[1].forEach(function(x){ul.append(h('li',{text:x}));});body.append(ul);
+      });
+      if(g.tip)body.append(h('p',{class:'tip',text:g.tip}));
+      if(g.l)body.append(h('a',{href:g.l,target:'_blank',rel:'noopener',text:'Sarkari site kholo'}));
+      box.append(h('details',{class:'gd'},sm,body));
+    });
+    box.append(h('h2',{class:'gh',text:'Ye kaagzaat hamesha rakho'}));
+    var total=0,done=0,groups=[];
+    ESS.forEach(function(g){
+      var wrap=h('div',{class:'panel',style:'margin-bottom:8px;padding:8px 14px'});
+      wrap.append(h('h4',{style:'margin:8px 0 2px;font-size:13px;color:var(--accent);text-transform:uppercase;letter-spacing:.04em',text:g[0]}));
+      g[1].forEach(function(it){
+        var auto=haveType(it[2]),on=auto||!!chk[it[0]];total++;if(on)done++;
+        var cb=h('input',{type:'checkbox'});cb.checked=on;cb.disabled=auto;
+        cb.addEventListener('change',function(){var c=chkGet();c[it[0]]=cb.checked;try{localStorage.setItem('al.chk',JSON.stringify(c));}catch(e){}renderGuide();});
+        var lb=h('label',{class:'ck'},cb,h('span',{text:it[1]}));
+        if(auto)lb.append(h('small',{text:'app me save'}));
+        wrap.append(lb);
+      });
+      groups.push(wrap);
+    });
+    box.append(h('p',{class:'small muted',style:'margin:0',text:done+' / '+total+' taiyaar'}));
+    var pr=h('div',{class:'gprog'},h('i',{style:'width:'+Math.round(done*100/total)+'%'}));box.append(pr);
+    groups.forEach(function(w){box.append(w);});
+  }
 
   /* ---------- schemes tab ---------- */
   var SCHEMES=[

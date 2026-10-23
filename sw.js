@@ -1,6 +1,6 @@
 /* Apna Locker service worker: app bina internet ke bhi khule.
    Naya version daalte waqt neeche VERSION badal do (v1 -> v2), taaki purana cache hat jaaye. */
-const VERSION = 'apna-locker-v7';
+const VERSION = 'apna-locker-v8';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png'];
 
 self.addEventListener('install', (e) => {

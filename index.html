@@ -217,6 +217,15 @@ body{background:radial-gradient(90% 38% at 50% 0,color-mix(in srgb,var(--accent)
 .install img{width:48px;height:48px;border-radius:12px;flex:none}
 html.splash .install,html.locked .install{display:none}
 @media (prefers-reduced-motion:reduce){#splash *,.row,.install{animation:none!important}}
+.install{flex-direction:column;align-items:center;text-align:center;gap:10px;padding:20px 18px 14px}
+.install img{width:64px;height:64px;border-radius:16px;box-shadow:0 8px 20px -8px rgba(10,42,71,.5)}
+.instbody{display:flex;flex-direction:column;gap:4px}
+.instbody b{font-size:18px}
+.instbody span{color:var(--muted);font-size:14px}
+.instbtns{display:flex;flex-direction:column;gap:4px;width:100%}
+.instbtns .btn{width:100%}
+.backdrop{position:fixed;inset:0;z-index:39;background:rgba(7,25,43,.5);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+html.splash .backdrop,html.locked .backdrop{display:none}
 </style>
 <script>try{if(localStorage.getItem('al.pin'))document.documentElement.classList.add('locked')}catch(e){}try{if(!sessionStorage.getItem('al.splash'))document.documentElement.classList.add('splash')}catch(e){}</script>
 </head>
@@ -228,11 +237,14 @@ html.splash .install,html.locked .install{display:none}
     <div><h1>Apna Locker</h1><p>Kaagzaat ek jagah, tareekh ki yaad, aur sarkari yojnayein.</p></div>
   </header>
 
-  <div class="install" id="installBar" hidden>
-    <img src="icon-192.png" alt="" width="48" height="48">
-    <span id="installText">Is app ko phone mein install karo. Bina internet ke bhi khulegi.</span>
-    <button class="btn" id="installBtn" type="button">Install karo</button>
-    <button class="linkbtn" id="installClose" type="button" style="color:var(--muted)">Baad mein</button>
+  <div class="backdrop" id="instBack" hidden></div>
+  <div class="install" id="installBar" role="dialog" aria-modal="true" aria-labelledby="instTitle" hidden>
+    <img src="icon-192.png" alt="" width="64" height="64">
+    <div class="instbody"><b id="instTitle">Apna Locker install karo</b><span id="installText"></span></div>
+    <div class="instbtns">
+      <button class="btn" id="installBtn" type="button">Install karo</button>
+      <button class="linkbtn" id="installClose" type="button" style="color:var(--muted)">Baad mein</button>
+    </div>
   </div>
 
   <div class="tabbar">
@@ -353,6 +365,7 @@ html.splash .install,html.locked .install{display:none}
       <div class="panel">
         <h2>Aapki privacy</h2>
         <p class="sub">Kaagzaat sirf aapke phone me rehte hain. Drive backup chalu karo to wo aapke apne Google Drive me, aapke password se encrypt ho kar jaate hain. App banane waale ko kuch nahi dikhta. Aadhaar bhejte waqt masked copy (sirf aakhri 4 ank) behtar hai, wo UIDAI ki site se mil jaati hai. Ye app sarkari nahi hai.</p>
+        <div class="actions" style="margin-top:12px"><button class="btn ghost" id="installAgain" type="button">App install karo</button></div>
       </div>
 
       <div class="panel">
@@ -1113,28 +1126,33 @@ html.splash .install,html.locked .install{display:none}
 <script>
 (function(){
   'use strict';
-  var bar=document.getElementById('installBar'),btn=document.getElementById('installBtn'),
-      close=document.getElementById('installClose'),txt=document.getElementById('installText'),deferred=null;
+  var bar=document.getElementById('installBar'),back=document.getElementById('instBack'),btn=document.getElementById('installBtn'),
+      close=document.getElementById('installClose'),txt=document.getElementById('installText'),again=document.getElementById('installAgain'),deferred=null;
   var standalone=(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone;
-  var dismissed=false;
-  try{dismissed=localStorage.getItem('al.installDismissed')==='1';}catch(e){}
-  if(!standalone&&!dismissed){
-    window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;bar.hidden=false;});
-    if(/iphone|ipad|ipod/i.test(navigator.userAgent)){
-      txt.textContent='iPhone par install karne ke liye Share dabao, phir "Add to Home Screen" chuno.';
-      btn.hidden=true;bar.hidden=false;
-    }
+  var isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  function later(){try{return Date.now()-(+localStorage.getItem('al.installLater')||0)<3*864e5;}catch(e){return false;}}
+  function show(){bar.hidden=false;back.hidden=false;}
+  function hide(){bar.hidden=true;back.hidden=true;}
+  function setup(){
+    if(deferred){txt.textContent='Home screen par icon aayega, aur bina internet ke bhi khulegi.';btn.hidden=false;}
+    else if(isIOS){txt.textContent='Neeche Share dabao, phir "Add to Home Screen" chuno.';btn.hidden=true;}
+    else{txt.textContent='Browser ke menu (teen bindu) me "Install app" ya "Add to Home screen" chuno.';btn.hidden=true;}
   }
+  if(standalone){if(again)again.hidden=true;}
+  else if(window.isSecureContext){
+    window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;setup();});
+    setTimeout(function(){if(!later()){setup();show();}},3500);
+  }
+  if(again)again.addEventListener('click',function(){setup();show();});
   btn.addEventListener('click',function(){
-    if(!deferred) return;
+    if(!deferred)return;
     deferred.prompt();
-    deferred.userChoice.then(function(){bar.hidden=true;deferred=null;});
+    deferred.userChoice.then(function(){hide();deferred=null;});
   });
-  close.addEventListener('click',function(){
-    bar.hidden=true;
-    try{localStorage.setItem('al.installDismissed','1');}catch(e){}
-  });
-  window.addEventListener('appinstalled',function(){bar.hidden=true;});
+  function dismiss(){hide();try{localStorage.setItem('al.installLater',String(Date.now()));}catch(e){}}
+  close.addEventListener('click',dismiss);
+  back.addEventListener('click',dismiss);
+  window.addEventListener('appinstalled',hide);
   if('serviceWorker' in navigator&&window.isSecureContext){
     window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});
   }

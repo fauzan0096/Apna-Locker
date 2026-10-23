@@ -8,7 +8,7 @@
 <meta name="description" content="Kaagzaat ek jagah, tareekh ki yaad, aur sarkari yojnayein.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Apna Locker">
@@ -28,7 +28,7 @@ img{max-width:100%}
 /* Layout: ek hi lambi phone column. Upar do tabs (Kaagzaat / Yojnayein). Kaagzaat tab mein search, tareekh ki status strip aur passport-page jaisi mono labels wali list. */
 :root{
   --bg:#EDF1F3; --surface:#FFFFFF; --ink:#12222E; --muted:#566874; --line:#D3DCE2;
-  --accent:#0A6C66; --accent-ink:#FFFFFF;
+  --accent:#1D5F96; --accent-ink:#FFFFFF;
   --ok:#16794A; --ok-bg:#DDF1E6; --warn:#8F5200; --warn-bg:#FBE9C9; --bad:#B3261E; --bad-bg:#F9DEDB;
   --scrim:#0A141C; --scrim-ink:#F2F6F8;
   --f-display:'Bricolage Grotesque',system-ui,sans-serif;
@@ -38,14 +38,14 @@ img{max-width:100%}
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#0D1A23; --surface:#142431; --ink:#E6EEF3; --muted:#93A5B2; --line:#25394A;
-    --accent:#4FC3B5; --accent-ink:#06211E;
+    --accent:#7CC0F0; --accent-ink:#06202F;
     --ok:#59C98C; --ok-bg:#12372A; --warn:#F0B35A; --warn-bg:#3B2D12; --bad:#FF8A80; --bad-bg:#43201E;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0D1A23; --surface:#142431; --ink:#E6EEF3; --muted:#93A5B2; --line:#25394A;
-  --accent:#4FC3B5; --accent-ink:#06211E;
+  --accent:#7CC0F0; --accent-ink:#06202F;
   --ok:#59C98C; --ok-bg:#12372A; --warn:#F0B35A; --warn-bg:#3B2D12; --bad:#FF8A80; --bad-bg:#43201E;
   color-scheme:dark;
 }
@@ -149,16 +149,87 @@ h2{font-size:19px;font-weight:600}
 #viewer img{max-width:100%;max-height:100%;object-fit:contain}
 #viewer .btn{background:var(--scrim-ink);color:var(--scrim)}
 @media (prefers-reduced-motion:no-preference){.tabs button,.btn,.chips button{transition:background-color .15s}}
+
+/* ---- Naya design ---- */
+:root{--shadow:0 1px 2px rgba(18,34,46,.06),0 8px 24px -14px rgba(18,34,46,.25);--r:16px}
+.brand{display:flex;gap:14px;align-items:center;margin-top:14px;padding:20px 18px;border-radius:22px;color:#fff;background:radial-gradient(120% 140% at 100% 0,#3A8CC7 0,transparent 55%),linear-gradient(135deg,#1D5F96,#0F3557);box-shadow:0 14px 32px -16px rgba(29,95,150,.7)}
+.brand p{margin:3px 0 0;color:rgba(255,255,255,.82);font-size:14px}
+.brand h1{font-size:28px}
+.mark{flex:none;width:50px;height:50px;border-radius:15px;display:grid;place-items:center;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25)}
+.tabs{border-radius:16px;padding:5px}
+.tabs button{border-radius:12px}
+.tabs button[aria-selected="true"]{box-shadow:0 4px 12px -4px rgba(29,95,150,.55)}
+.strip,.panel,.list,.scheme,.install{border-radius:var(--r);box-shadow:var(--shadow)}
+.strip b{font-size:28px}
+.btn{border-radius:12px}
+input,select,textarea{border-radius:12px}
+.row{padding:16px}
+.row:active{background:color-mix(in srgb,var(--accent) 6%,transparent)}
+.code{background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent);border-color:transparent;border-radius:10px;font-weight:600;padding:9px 0}
+.thumb{border-radius:10px}
+.pill{padding:3px 10px}
+.sendrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.btn.sm{min-height:38px;padding:6px 14px;font-size:14px;border-radius:999px}
+.scanbox{display:flex;flex-direction:column;gap:8px;padding:12px;border:1.5px dashed var(--accent);border-radius:14px;background:color-mix(in srgb,var(--accent) 6%,transparent)}
+.scanbox label.chk{flex-direction:row;align-items:center;gap:8px;font-size:14px;color:var(--ink)}
+.scanbox input[type=checkbox]{width:20px;min-height:20px;height:20px;padding:0}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;z-index:30;box-shadow:var(--shadow)}
+#lock{display:none;position:fixed;inset:0;z-index:50;align-items:center;justify-content:center;padding:24px;color:#fff;background:radial-gradient(120% 120% at 100% 0,#3A8CC7 0,transparent 55%),linear-gradient(160deg,#1D5F96,#0F3557)}
+html.locked #lock{display:flex}
+html.locked .wrap,html.locked #viewer{visibility:hidden}
+.lockcard{width:100%;max-width:320px;display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center}
+.lockcard input{text-align:center;font:600 24px var(--f-mono);letter-spacing:.4em;color:var(--ink)}
+.lockcard .btn{width:100%;background:#fff;color:#0F3557}
+.lockcard .sub,.lockcard .formmsg{color:rgba(255,255,255,.88)}
+.lockcard .formmsg.err{color:#FFD7D2}
+#emerg{position:fixed;inset:0;z-index:60;overflow:auto;padding:max(20px,env(safe-area-inset-top,0px)) 20px 28px;background:#fff;color:#12222E}
+#emerg h2{font-size:30px;margin:8px 0 12px}
+#emerg .emblood{display:flex;align-items:baseline;gap:12px;background:#F9DEDB;color:#B3261E;border-radius:16px;padding:14px 18px;margin-bottom:12px}
+#emerg .emblood b{font:700 44px var(--f-mono)}
+#emerg .emmed{font-size:18px;white-space:pre-wrap;margin:0 0 14px}
+#emerg .emcall{display:block;text-align:center;text-decoration:none;font-size:18px;padding:16px;margin-bottom:10px;background:#16794A;color:#fff}
+#emerg .emclose{margin-top:12px;background:#12222E;color:#fff;width:100%}
+.lockcard .linkbtn{color:#fff}
+#splash{display:none;position:fixed;inset:0;z-index:80;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#fff;background:radial-gradient(90% 60% at 50% 32%,#3A8CC7 0,transparent 62%),linear-gradient(170deg,#1D5F96,#0A2A47);transition:opacity .45s,transform .45s}
+html.splash #splash{display:flex}
+#splash.out{opacity:0;transform:scale(1.04);pointer-events:none}
+#splash img{width:132px;height:132px;border-radius:30px;box-shadow:0 22px 50px -10px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.2);animation:pop .8s cubic-bezier(.2,.9,.3,1.15) both}
+#splash h1{font-size:32px;margin-top:12px;animation:rise .6s .3s both}
+#splash p{margin:0;opacity:.85;font-size:14px;animation:rise .6s .45s both}
+#splash .bar{width:120px;height:3px;border-radius:3px;background:rgba(255,255,255,.22);margin-top:24px;overflow:hidden;position:relative}
+#splash .bar::after{content:"";position:absolute;inset:0;background:#fff;transform:translateX(-100%);animation:load 1.3s .2s ease-out forwards}
+@keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes load{to{transform:none}}
+@keyframes sheet{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+body{background:radial-gradient(90% 38% at 50% 0,color-mix(in srgb,var(--accent) 16%,transparent),transparent 70%) no-repeat,var(--bg)}
+.brand{position:relative;overflow:hidden}
+.brand::after{content:"";position:absolute;right:-50px;top:-70px;width:170px;height:170px;border-radius:50%;border:1px solid rgba(255,255,255,.18);box-shadow:0 0 0 28px rgba(255,255,255,.05),0 0 0 60px rgba(255,255,255,.035);pointer-events:none}
+.mark{padding:0;overflow:hidden;background:none;border:0;box-shadow:0 8px 20px -6px rgba(0,0,0,.55)}
+.mark img{width:100%;height:100%;display:block;border-radius:15px}
+.tabbar{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:color-mix(in srgb,var(--bg) 82%,transparent)}
+.panel h2{display:flex;align-items:center;gap:10px}
+.panel h2::before{content:"";width:4px;height:18px;border-radius:2px;background:var(--accent);flex:none}
+.btn:where(:not(.ghost)){box-shadow:0 6px 14px -8px var(--accent)}
+.row{animation:rise .45s both}
+.row:nth-child(2){animation-delay:.05s}.row:nth-child(3){animation-delay:.1s}.row:nth-child(4){animation-delay:.15s}.row:nth-child(n+5){animation-delay:.2s}
+.install{position:fixed;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom,0px));margin:0 auto;max-width:636px;z-index:40;padding:14px;gap:12px;box-shadow:0 22px 50px -12px rgba(10,42,71,.55);animation:sheet .55s .5s both}
+.install img{width:48px;height:48px;border-radius:12px;flex:none}
+html.splash .install,html.locked .install{display:none}
+@media (prefers-reduced-motion:reduce){#splash *,.row,.install{animation:none!important}}
 </style>
+<script>try{if(localStorage.getItem('al.pin'))document.documentElement.classList.add('locked')}catch(e){}try{if(!sessionStorage.getItem('al.splash'))document.documentElement.classList.add('splash')}catch(e){}</script>
 </head>
 <body>
+<div id="splash" aria-hidden="true"><img src="icon-512.png" alt="" width="132" height="132"><h1>Apna Locker</h1><p>Kaagzaat ek jagah, mehfooz</p><i class="bar"></i></div>
 <div class="wrap">
   <header class="brand">
-    <h1>Apna Locker</h1>
-    <p>Kaagzaat ek jagah, tareekh ki yaad, aur sarkari yojnayein.</p>
+    <div class="mark" aria-hidden="true"><img src="icon-192.png" alt="" width="50" height="50"></div>
+    <div><h1>Apna Locker</h1><p>Kaagzaat ek jagah, tareekh ki yaad, aur sarkari yojnayein.</p></div>
   </header>
 
   <div class="install" id="installBar" hidden>
+    <img src="icon-192.png" alt="" width="48" height="48">
     <span id="installText">Is app ko phone mein install karo. Bina internet ke bhi khulegi.</span>
     <button class="btn" id="installBtn" type="button">Install karo</button>
     <button class="linkbtn" id="installClose" type="button" style="color:var(--muted)">Baad mein</button>
@@ -186,7 +257,7 @@ h2{font-size:19px;font-weight:600}
             <select id="fType"></select>
           </label>
           <label for="fHolder">Kiska hai
-            <input id="fHolder" type="text" placeholder="Main, Biwi, Abbu..." autocomplete="off">
+            <input id="fHolder" type="text" list="holderList" placeholder="Main, Biwi, Abbu..." autocomplete="off"><datalist id="holderList"></datalist>
           </label>
           <label class="full" for="fTitle">Naam (khali chhodo to kism ka naam lagega)
             <input id="fTitle" type="text" placeholder="Jaise: Iqama, Class 10 marksheet" autocomplete="off">
@@ -197,6 +268,12 @@ h2{font-size:19px;font-weight:600}
           <label for="fFiles">Photo (front/back, 6 tak)
             <input id="fFiles" type="file" accept="image/*" multiple>
           </label>
+          <div class="full scanbox">
+            <button class="btn ghost" id="scanBtn" type="button">Camera se scan karo</button>
+            <input id="fCam" type="file" accept="image/*" capture="environment" hidden>
+            <label class="chk"><input id="fScan" type="checkbox" checked> Scan jaisa saaf karo (kaala-safed)</label>
+            <span class="small muted" id="scanCount">Har page ke baad dobara dabao. Phir Save karo, uske baad PDF bana kar bhej sakte ho.</span>
+          </div>
           <label class="full" for="fNotes">Yaad ke liye note
             <textarea id="fNotes" placeholder="Number, kahan rakha hai, kis office se mila..."></textarea>
           </label>
@@ -207,8 +284,10 @@ h2{font-size:19px;font-weight:600}
         </div>
       </form>
 
+      <div class="chips" id="famChips" aria-label="Kiska hai, us se chhaanto"></div>
       <div class="chips" id="chips" aria-label="Kism se chhaanto"></div>
       <div class="small muted" id="count"></div>
+      <p class="small muted" style="margin:0">Aapka data sirf aapke phone me hai. Hum (app banane wale) kuch nahi dekhte.</p>
       <div class="list" id="docList"></div>
 
       <div class="actions">
@@ -217,6 +296,64 @@ h2{font-size:19px;font-weight:600}
       <textarea id="copyBox" readonly hidden aria-label="Copy ki gayi list"></textarea>
 
       <p class="note" id="storeNote"></p>
+
+      <div class="panel">
+        <h2>Google Drive me backup</h2>
+        <p class="sub">Sirf agar aap chaho. Kaagzaat seedha aapke phone se aapke apne Google Drive me jaate hain. Hum tak ya kisi server tak kuch nahi aata.</p>
+        <label for="drvPw" style="margin-top:12px">Backup password (kam se kam 6 akshar)
+          <input id="drvPw" type="password" autocomplete="off" maxlength="64">
+        </label>
+        <p class="small muted" style="margin:6px 0 0">Backup is password se encrypt hota hai, to Drive me bhi koi usse padh nahi sakta. Password bhoolne par backup wapas nahi aayega.</p>
+        <div class="actions" style="margin-top:12px">
+          <button class="btn" id="drvUp" type="button">Drive par save karo</button>
+          <button class="btn ghost" id="drvDown" type="button">Drive se wapas lao</button>
+        </div>
+        <p class="formmsg" id="drvMsg" role="status"></p>
+      </div>
+
+      <div class="panel">
+        <h2>App Lock (PIN)</h2>
+        <p class="sub" id="pinState"></p>
+        <label for="pinIn" style="margin-top:12px">PIN (4 se 6 ank)
+          <input id="pinIn" type="password" inputmode="numeric" autocomplete="off" maxlength="6" pattern="[0-9]*">
+        </label>
+        <div class="actions" style="margin-top:12px">
+          <button class="btn" id="pinSet" type="button">PIN lagao</button>
+          <button class="btn ghost" id="pinOff" type="button" hidden>PIN hatao</button>
+        </div>
+        <p class="formmsg" id="pinMsg" role="status"></p>
+        <p class="note">Ye app kholne par rok lagata hai (phone chhupne ke 1 minute baad dobara band). PIN bhool gaye to wapas nahi milega, bas app ka data saaf karna padega. Isliye Drive backup bhi rakho.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Emergency card</h2>
+        <p class="sub">Blood group aur ghar waalon ke number. Lock screen se bhi ek tap me dikhta hai, isliye sirf wahi bharo jo sabko dikhana theek ho.</p>
+        <div class="formgrid" style="margin-top:12px">
+          <label class="full" for="eName">Naam<input id="eName" type="text" autocomplete="off"></label>
+          <label for="eBlood">Blood group<select id="eBlood"><option value="">Chuno</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select></label>
+          <label for="eP1n">Pehla contact (naam)<input id="eP1n" type="text" autocomplete="off"></label>
+          <label for="eP1">Pehla number<input id="eP1" type="tel" autocomplete="off"></label>
+          <label for="eP2n">Doosra contact (naam)<input id="eP2n" type="text" autocomplete="off"></label>
+          <label for="eP2">Doosra number<input id="eP2" type="tel" autocomplete="off"></label>
+          <label class="full" for="eMed">Allergy / bimari / dawai<textarea id="eMed"></textarea></label>
+        </div>
+        <div class="actions" style="margin-top:12px">
+          <button class="btn" id="emSave" type="button">Save karo</button>
+          <button class="btn ghost" id="emShow" type="button">Card dikhao</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Expiry ki yaad</h2>
+        <p class="sub">Har kaagaz par "Calendar me yaad lagao" dabao. Phone ka calendar 30, 7 aur 1 din pehle yaad dilayega, app band ho tab bhi. Neeche wala notification sirf app kholne par dikhta hai.</p>
+        <div class="actions" style="margin-top:12px"><button class="btn ghost" id="notifBtn" type="button">App kholne par notification chalu karo</button></div>
+        <p class="formmsg" id="notifMsg" role="status"></p>
+      </div>
+
+      <div class="panel">
+        <h2>Aapki privacy</h2>
+        <p class="sub">Kaagzaat sirf aapke phone me rehte hain. Drive backup chalu karo to wo aapke apne Google Drive me, aapke password se encrypt ho kar jaate hain. App banane waale ko kuch nahi dikhta. Aadhaar bhejte waqt masked copy (sirf aakhri 4 ank) behtar hai, wo UIDAI ki site se mil jaati hai. Ye app sarkari nahi hai.</p>
+      </div>
 
       <div class="panel">
         <h2>Gulf mein madad ke raaste</h2>
@@ -229,6 +366,7 @@ h2{font-size:19px;font-weight:600}
     </section>
 
     <section id="paneSch" role="tabpanel" aria-labelledby="tabSch" hidden>
+      <p class="note" style="border-top:0;padding-top:0">Ye list sirf madad ke liye hai, sarkari app nahi. Yojna ki sahi aur taaza jaankari hamesha sarkari site par dekho.</p>
       <div>
         <h2>Aap kin yojnaon ke liye ho sakte ho?</h2>
         <p class="sub">Apni jaankari bharo. Yeh sirf andaza hai, jaankari aapke phone se bahar nahi jaati.</p>
@@ -278,6 +416,20 @@ h2{font-size:19px;font-weight:600}
       <p class="note">Rules badalte rehte hain, isliye aakhri faisla hamesha sarkari portal par dekho. Yojna mein shamil karne ke naam par bada paisa maangne wale agent se savdhan raho.</p>
     </section>
   </main>
+</div>
+
+<div id="emerg" hidden role="dialog" aria-modal="true" aria-label="Emergency card"><div id="emBody"></div><button class="btn emclose" id="emClose" type="button">Band karo</button></div>
+
+<div id="lock" role="dialog" aria-modal="true" aria-label="App lock">
+  <div class="lockcard">
+    <div class="mark" aria-hidden="true"><img src="icon-192.png" alt="" width="50" height="50"></div>
+    <h2>Apna Locker</h2>
+    <p class="sub" style="margin:0">Kholne ke liye apna PIN daalo.</p>
+    <input id="lockPin" type="password" inputmode="numeric" autocomplete="off" maxlength="6" aria-label="PIN">
+    <button class="btn" id="lockGo" type="button">Kholo</button>
+    <p class="formmsg" id="lockMsg" role="alert"></p>
+    <button class="linkbtn" id="lockEm" type="button" hidden>Emergency card dekho</button>
+  </div>
 </div>
 
 <div id="viewer" hidden role="dialog" aria-modal="true" aria-label="Photo dekho">
@@ -394,8 +546,22 @@ h2{font-size:19px;font-weight:600}
   function current(){return docs.length?docs:sampleDocs();}
 
   /* ---------- documents tab ---------- */
+  var holderFilter='all';
+  function hkey(d){return (d.holder||'').trim().toLowerCase();}
+  function renderFam(all){
+    var m={},k;
+    all.forEach(function(d){k=hkey(d);if(!(k in m))m[k]=(d.holder||'').trim()||'Bina naam';});
+    var keys=Object.keys(m),box=$('famChips');box.replaceChildren();
+    var dl=$('holderList');dl.replaceChildren();
+    var seen={};keys.concat(['Main','Biwi','Abbu','Ammi','Bachcha']).forEach(function(n){var l=m[n]||n;if(n&&!seen[l.toLowerCase()]){seen[l.toLowerCase()]=1;dl.append(h('option',{value:l}));}});
+    if(holderFilter!=='all'&&!(holderFilter in m))holderFilter='all';
+    if(keys.length<2){holderFilter='all';return;}
+    function chip(key,label){box.append(h('button',{type:'button','aria-pressed':String(holderFilter===key),text:label,onclick:function(){holderFilter=key;render();}}));}
+    chip('all','Sab log');keys.forEach(function(x){chip(x,m[x]);});
+  }
   function matches(d){
     if(typeFilter!=='all' && d.type!==typeFilter) return false;
+    if(holderFilter!=='all' && hkey(d)!==holderFilter) return false;
     if(!query) return true;
     var hay=[d.title,TYPES[d.type].name,d.holder,d.notes,d.date?fmt(d.date):'',d.date?hijri(d.date):''].join(' ').toLowerCase();
     return query.toLowerCase().split(/\s+/).filter(Boolean).every(function(w){return hay.indexOf(w)!==-1;});
@@ -457,6 +623,12 @@ h2{font-size:19px;font-weight:600}
       });
       info.append(th);
     }
+    if(d.images&&d.images.length){
+      info.append(h('div',{class:'sendrow'},
+        h('button',{class:'btn sm',type:'button',text:'PDF bhejo',onclick:function(){sendDoc(d);}}),
+        h('button',{class:'btn sm ghost',type:'button',text:'PDF download',onclick:function(){downloadDoc(d);}})));
+    }
+    if(d.date&&!d.sample){info.append(h('div',{class:'sendrow'},h('button',{class:'btn sm ghost',type:'button',text:'Calendar me yaad lagao',onclick:function(){icsDoc(d);}})));}
     if(!d.sample){
       info.append(h('button',{class:'linkbtn',type:'button',text:'Hatao',onclick:function(){removeDoc(d);}}));
     }
@@ -467,6 +639,7 @@ h2{font-size:19px;font-weight:600}
     var all=current();
     renderStrip(all);
     renderChips(all);
+    renderFam(all);
     var shown=all.filter(matches).sort(sortDocs);
     lastShown=shown;
     var list=$('docList'); list.replaceChildren();
@@ -499,22 +672,73 @@ h2{font-size:19px;font-weight:600}
     if(!p.hidden) $('fTitle').focus();
   });
 
-  function shrink(file){
+  function shrink(file,scan){
     return createImageBitmap(file).then(function(bmp){
       var max=1600, sc=Math.min(1,max/Math.max(bmp.width,bmp.height));
       var c=document.createElement('canvas');
       c.width=Math.max(1,Math.round(bmp.width*sc)); c.height=Math.max(1,Math.round(bmp.height*sc));
       var x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(bmp,0,0,c.width,c.height);
+      if(scan){var im=x.getImageData(0,0,c.width,c.height),d=im.data;for(var i=0;i<d.length;i+=4){var g=.299*d[i]+.587*d[i+1]+.114*d[i+2],v=(g-70)*255/115;v=v<0?0:v>255?255:v;d[i]=d[i+1]=d[i+2]=v;}x.putImageData(im,0,0);}
       return new Promise(function(r){c.toBlob(function(b){r(b||file);},'image/jpeg',0.82);});
     }).catch(function(){return file;});
   }
+
+  /* ---------- scan, PDF, share ---------- */
+  var extra=[];
+  function scanMsg(){$('scanCount').textContent=extra.length?extra.length+' page scan ho gaye. Aur page ke liye dobara dabao, ya Save karo.':'Har page ke baad dobara dabao. Phir Save karo, uske baad PDF bana kar bhej sakte ho.';}
+  $('scanBtn').addEventListener('click',function(){$('fCam').click();});
+  $('fCam').addEventListener('change',function(){
+    Array.prototype.forEach.call(this.files||[],function(f){extra.push(f);}); this.value=''; scanMsg();
+  });
+  function toast(t){var e=h('div',{class:'toast',role:'status',text:t});document.body.append(e);setTimeout(function(){e.remove();},2600);}
+  function makePDF(blobs){
+    return Promise.all(blobs.map(function(b){return b.type==='image/jpeg'?b:shrink(b,false);})).then(function(js){
+      return Promise.all(js.map(function(b){return Promise.all([b.arrayBuffer(),createImageBitmap(b)]).then(function(r){return {data:new Uint8Array(r[0]),w:r[1].width,h:r[1].height};});}));
+    }).then(function(imgs){
+      var enc=new TextEncoder(),parts=[],offs=[],len=0,n=imgs.length,kids=[],i;
+      function push(x){var u=typeof x==='string'?enc.encode(x):x;parts.push(u);len+=u.length;}
+      function obj(k,body){offs[k]=len;push(k+' 0 obj\n'+body+'\nendobj\n');}
+      for(i=0;i<n;i++)kids.push((3+i*3)+' 0 R');
+      push('%PDF-1.4\n');
+      obj(1,'<< /Type /Catalog /Pages 2 0 R >>');
+      obj(2,'<< /Type /Pages /Kids ['+kids.join(' ')+'] /Count '+n+' >>');
+      imgs.forEach(function(im,i){
+        var p=3+i*3,m=28,sc=Math.min((595-2*m)/im.w,(842-2*m)/im.h),w=im.w*sc,hh=im.h*sc;
+        var c='q '+w.toFixed(2)+' 0 0 '+hh.toFixed(2)+' '+((595-w)/2).toFixed(2)+' '+((842-hh)/2).toFixed(2)+' cm /Im0 Do Q';
+        obj(p,'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /XObject << /Im0 '+(p+2)+' 0 R >> >> /Contents '+(p+1)+' 0 R >>');
+        obj(p+1,'<< /Length '+c.length+' >>\nstream\n'+c+'\nendstream');
+        offs[p+2]=len;
+        push((p+2)+' 0 obj\n<< /Type /XObject /Subtype /Image /Width '+im.w+' /Height '+im.h+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+im.data.length+' >>\nstream\n');
+        push(im.data); push('\nendstream\nendobj\n');
+      });
+      var total=3+n*3,xr=len,x='xref\n0 '+total+'\n0000000000 65535 f \n';
+      for(i=1;i<total;i++)x+=('0000000000'+offs[i]).slice(-10)+' 00000 n \n';
+      push(x+'trailer\n<< /Size '+total+' /Root 1 0 R >>\nstartxref\n'+xr+'\n%%EOF');
+      return new Blob(parts,{type:'application/pdf'});
+    });
+  }
+  function pdfFile(d){
+    return makePDF(d.images).then(function(pdf){
+      var name=((d.title||TYPES[d.type].name)+'').replace(/[\\\/:*?"<>|]+/g,'').trim()||'kaagaz';
+      return new File([pdf],name+'.pdf',{type:'application/pdf'});
+    });
+  }
+  function savePDF(f){var a=h('a',{href:URL.createObjectURL(f),download:f.name});document.body.append(a);a.click();a.remove();toast('PDF download ho gayi');}
+  function sendDoc(d){
+    if(/aadhaa?r/i.test(d.type+' '+(d.title||'')+' '+TYPES[d.type].name))toast('Aadhaar bhej rahe ho to masked copy behtar hai.');
+    pdfFile(d).then(function(f){
+      if(navigator.canShare&&navigator.canShare({files:[f]})) return navigator.share({files:[f],title:f.name}).catch(function(e){if(e&&e.name!=='AbortError')savePDF(f);});
+      savePDF(f);
+    }).catch(function(){toast('PDF nahi ban paayi');});
+  }
+  function downloadDoc(d){pdfFile(d).then(savePDF).catch(function(){toast('PDF nahi ban paayi');});}
   function msg(t,err){var m=$('formMsg');m.textContent=t;m.className='formmsg'+(err?' err':'');}
 
   $('addPanel').addEventListener('submit',function(ev){
     ev.preventDefault();
-    var files=Array.prototype.slice.call($('fFiles').files||[]).filter(function(f){return /^image\//.test(f.type);}).slice(0,6);
+    var files=Array.prototype.slice.call($('fFiles').files||[]).concat(extra).filter(function(f){return /^image\//.test(f.type);}).slice(0,6), scan=$('fScan').checked;
     var btn=$('saveBtn'); btn.disabled=true; msg('Save ho raha hai...');
-    Promise.all(files.map(shrink)).then(function(blobs){
+    Promise.all(files.map(function(f){return shrink(f,scan);})).then(function(blobs){
       var rec={
         id:'d'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),
         type:$('fType').value, title:$('fTitle').value.trim(), holder:$('fHolder').value.trim(),
@@ -525,7 +749,7 @@ h2{font-size:19px;font-weight:600}
       try{ if(navigator.storage&&navigator.storage.persist) navigator.storage.persist(); }catch(e){}
       return dbPut(rec).catch(function(){volatile=true;render();});
     }).then(function(){
-      $('addPanel').reset(); msg('Save ho gaya.');
+      $('addPanel').reset(); extra=[]; scanMsg(); msg('Save ho gaya.');
     }).catch(function(){msg('Save nahi ho paya. Dobara koshish karo.',true);})
     .then(function(){btn.disabled=false;});
   });
@@ -660,7 +884,229 @@ h2{font-size:19px;font-weight:600}
   /* ---------- start ---------- */
   render();
   renderSchemes(true);
-  dbAll().then(function(rows){docs=rows||[];}).catch(function(){volatile=true;}).then(render);
+
+  /* ---------- Google Drive backup (user ka apna Drive, data sirf phone <-> Drive) ---------- */
+  var GOOGLE_CLIENT_ID=''; /* Google Cloud se banaya OAuth Client ID yahan daalo (ye secret nahi hai). */
+  var DRV_NAME='apna-locker-backup.json', gToken=null, gTokenExp=0;
+  function dmsg(t,err){var m=$('drvMsg');m.textContent=t;m.className='formmsg'+(err?' err':'');}
+  function loadGsi(){
+    return new Promise(function(res,rej){
+      if(window.google&&google.accounts&&google.accounts.oauth2) return res();
+      var sc=document.createElement('script');sc.src='https://accounts.google.com/gsi/client';sc.async=true;
+      sc.onload=res;sc.onerror=function(){rej(new Error('net'));};document.head.append(sc);
+    });
+  }
+  function getToken(){
+    if(gToken&&Date.now()<gTokenExp) return Promise.resolve(gToken);
+    return loadGsi().then(function(){
+      return new Promise(function(res,rej){
+        google.accounts.oauth2.initTokenClient({
+          client_id:GOOGLE_CLIENT_ID, scope:'https://www.googleapis.com/auth/drive.file',
+          callback:function(r){if(r&&r.access_token){gToken=r.access_token;gTokenExp=Date.now()+(r.expires_in-60)*1000;res(gToken);}else rej(new Error('auth'));},
+          error_callback:function(){rej(new Error('auth'));}
+        }).requestAccessToken();
+      });
+    });
+  }
+  function gfetch(url,opt){
+    return getToken().then(function(t){
+      opt=opt||{};opt.headers=Object.assign({Authorization:'Bearer '+t},opt.headers||{});
+      return fetch(url,opt).then(function(r){if(!r.ok)throw new Error('http '+r.status);return r;});
+    });
+  }
+  function findBackup(){
+    var q=encodeURIComponent("name='"+DRV_NAME+"' and trashed=false");
+    return gfetch('https://www.googleapis.com/drive/v3/files?q='+q+'&fields=files(id)&spaces=drive').then(function(r){return r.json();}).then(function(j){return j.files&&j.files[0]?j.files[0].id:null;});
+  }
+  function b2d(b){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result);};r.onerror=rej;r.readAsDataURL(b);});}
+
+  function unhex(x){return new Uint8Array((x.match(/../g)||[]).map(function(v){return parseInt(v,16);}));}
+  function deriveKey(pw,salt,iter){
+    return crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey'])
+      .then(function(k){return crypto.subtle.deriveKey({name:'PBKDF2',hash:'SHA-256',salt:salt,iterations:iter},k,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);});
+  }
+  function encBody(text,pw){
+    var salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),iter=200000;
+    return deriveKey(pw,salt,iter).then(function(k){return crypto.subtle.encrypt({name:'AES-GCM',iv:iv},k,new TextEncoder().encode(text));})
+      .then(function(ct){return b2d(new Blob([ct]));})
+      .then(function(u){return JSON.stringify({app:'apna-locker',v:2,enc:true,iter:iter,salt:hex(salt),iv:hex(iv),data:u.split(',')[1]});});
+  }
+  function decBody(j,pw){
+    if(!j||!j.enc) return j;
+    if(!pw) throw new Error('pw');
+    return fetch('data:application/octet-stream;base64,'+j.data).then(function(r){return r.arrayBuffer();}).then(function(buf){
+      return deriveKey(pw,unhex(j.salt),j.iter).then(function(k){return crypto.subtle.decrypt({name:'AES-GCM',iv:unhex(j.iv)},k,buf);});
+    }).then(function(pt){return JSON.parse(new TextDecoder().decode(pt));}).catch(function(){throw new Error('pw');});
+  }
+  function drvGuard(){
+    if(!GOOGLE_CLIENT_ID){dmsg('Drive backup abhi chalu nahi hua (Client ID baaki hai).',true);return false;}
+    if(location.protocol!=='https:'&&location.hostname!=='localhost'){dmsg('Ye sirf app ke https link se chalega, file seedha kholne se nahi.',true);return false;}
+    return true;
+  }
+  $('drvUp').addEventListener('click',function(){
+    if(!drvGuard())return;
+    var pw=$('drvPw').value;
+    if(pw.length<6){dmsg('Backup password kam se kam 6 akshar ka rakho.',true);return;}
+    var mine=docs.filter(function(d){return !d.sample;});
+    if(!mine.length){dmsg('Abhi save karne ke liye koi kaagaz nahi hai.',true);return;}
+    dmsg('Taiyaar ho raha hai...');
+    Promise.all(mine.map(function(d){
+      return Promise.all((d.images||[]).map(b2d)).then(function(im){var c=Object.assign({},d);c.images=im;return c;});
+    })).then(function(list){
+      return encBody(JSON.stringify({app:'apna-locker',v:1,saved:Date.now(),docs:list,emerg:emGet()}),pw);
+    }).then(function(body){
+      return findBackup().then(function(id){
+        var bd='alb'+Date.now(),meta=id?{name:DRV_NAME}:{name:DRV_NAME,mimeType:'application/json'};
+        var mp='--'+bd+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify(meta)+'\r\n--'+bd+'\r\nContent-Type: application/json\r\n\r\n'+body+'\r\n--'+bd+'--';
+        var url='https://www.googleapis.com/upload/drive/v3/files'+(id?'/'+id:'')+'?uploadType=multipart';
+        return gfetch(url,{method:id?'PATCH':'POST',headers:{'Content-Type':'multipart/related; boundary='+bd},body:mp});
+      }).then(function(){dmsg(mine.length+' kaagaz aapke Drive me save ho gaye.');});
+    }).catch(function(){dmsg('Drive me save nahi ho paya. Login ya internet check karke dobara dabao.',true);});
+  });
+  $('drvDown').addEventListener('click',function(){
+    if(!drvGuard())return;
+    var pw=$('drvPw').value;
+    dmsg('Drive se dhundh raha hai...');
+    findBackup().then(function(id){
+      if(!id){dmsg('Drive me Apna Locker ka backup nahi mila.',true);return;}
+      return gfetch('https://www.googleapis.com/drive/v3/files/'+id+'?alt=media').then(function(r){return r.json();}).then(function(j){return decBody(j,pw);}).then(function(j){
+        if(!j||j.app!=='apna-locker'||!Array.isArray(j.docs)) throw new Error('bad');
+        if(j.emerg&&!emHas(emGet())){try{localStorage.setItem(EM_KEY,JSON.stringify(j.emerg));}catch(e){}emFill();emUI();}
+        var have={};docs.forEach(function(d){have[d.id]=1;});
+        var add=j.docs.filter(function(d){return d&&d.id&&!have[d.id];});
+        return Promise.all(add.map(function(d){
+          return Promise.all((d.images||[]).map(function(u){return fetch(u).then(function(r){return r.blob();});})).then(function(bl){
+            d.images=bl;docs.push(d);return dbPut(d).catch(function(){volatile=true;});
+          });
+        })).then(function(){render();dmsg(add.length?add.length+' kaagaz wapas aa gaye.':'Sab kaagaz pehle se yahin hain.');});
+      });
+    }).catch(function(e){dmsg(e&&e.message==='pw'?'Backup password galat hai ya khaali hai.':'Wapas laana nahi ho paya. Login ya internet check karo.',true);});
+  });
+
+  /* ---------- App Lock (PIN) ---------- */
+  var PIN_KEY='al.pin', fails=0, blockedUntil=0, hiddenAt=0;
+  function pinRec(){try{return JSON.parse(localStorage.getItem(PIN_KEY)||'null');}catch(e){return null;}}
+  function hex(b){return Array.prototype.map.call(new Uint8Array(b),function(x){return ('0'+x.toString(16)).slice(-2);}).join('');}
+  function pinHash(pin,saltHex,iter){
+    var salt=new Uint8Array((saltHex.match(/../g)||[]).map(function(x){return parseInt(x,16);}));
+    return crypto.subtle.importKey('raw',new TextEncoder().encode(pin),'PBKDF2',false,['deriveBits'])
+      .then(function(k){return crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:salt,iterations:iter},k,256);}).then(hex);
+  }
+  function pinUI(){
+    var on=!!pinRec();
+    $('pinState').textContent=on?'Chalu hai. App kholne ke liye PIN lagega.':'Band hai. PIN lagao to bina PIN ke koi app nahi khol payega.';
+    $('pinSet').textContent=on?'PIN badlo':'PIN lagao'; $('pinOff').hidden=!on;
+  }
+  function pmsg(t,err){var m=$('pinMsg');m.textContent=t;m.className='formmsg'+(err?' err':'');}
+  function lockNow(){
+    if(!pinRec())return;
+    closeViewer(); $('lockPin').value=''; $('lockMsg').textContent='';
+    document.documentElement.classList.add('locked');
+  }
+  function unlock(){
+    var r=pinRec(); if(!r){document.documentElement.classList.remove('locked');return;}
+    var wait=Math.ceil((blockedUntil-Date.now())/1000), m=$('lockMsg');
+    if(wait>0){m.className='formmsg err';m.textContent=wait+' second baad dobara try karo.';return;}
+    pinHash($('lockPin').value,r.salt,r.iter).then(function(hh){
+      if(hh===r.hash){fails=0;document.documentElement.classList.remove('locked');$('lockPin').value='';m.textContent='';}
+      else{fails++;m.className='formmsg err';$('lockPin').value='';
+        if(fails>=5){blockedUntil=Date.now()+30000;fails=0;m.textContent='Bahut galat try. 30 second ruko.';} else m.textContent='PIN galat hai.';}
+    }).catch(function(){m.className='formmsg err';m.textContent='Is browser me lock nahi chal raha.';});
+  }
+  $('lockGo').addEventListener('click',unlock);
+  $('lockPin').addEventListener('keydown',function(e){if(e.key==='Enter')unlock();});
+  $('pinSet').addEventListener('click',function(){
+    var v=$('pinIn').value;
+    if(!/^\d{4,6}$/.test(v)){pmsg('PIN 4 se 6 ank ka hona chahiye.',true);return;}
+    if(!(window.crypto&&crypto.subtle)){pmsg('Lock sirf app ke https link se lagta hai.',true);return;}
+    var salt=hex(crypto.getRandomValues(new Uint8Array(16))), iter=150000;
+    pinHash(v,salt,iter).then(function(hh){
+      localStorage.setItem(PIN_KEY,JSON.stringify({salt:salt,iter:iter,hash:hh}));
+      $('pinIn').value=''; pinUI(); pmsg('PIN lag gaya. Yaad rakhna.');
+    }).catch(function(){pmsg('PIN nahi lag paya.',true);});
+  });
+  $('pinOff').addEventListener('click',function(){
+    var r=pinRec(); if(!r)return;
+    pinHash($('pinIn').value,r.salt,r.iter).then(function(hh){
+      if(hh!==r.hash){pmsg('Sahi PIN upar daalo, phir "PIN hatao" dabao.',true);return;}
+      localStorage.removeItem(PIN_KEY); $('pinIn').value=''; pinUI(); pmsg('PIN hat gaya.');
+    }).catch(function(){pmsg('PIN nahi hat paya.',true);});
+  });
+  document.addEventListener('visibilitychange',function(){
+    if(document.hidden){hiddenAt=Date.now();}
+    else if(hiddenAt&&Date.now()-hiddenAt>60000){lockNow();}
+  });
+  pinUI();
+  if(document.documentElement.classList.contains('locked')) setTimeout(function(){$('lockPin').focus();},50);
+
+  /* ---------- Emergency card ---------- */
+  var EM_KEY='al.emerg', EMF=['Name','Blood','P1n','P1','P2n','P2','Med'];
+  function emGet(){try{return JSON.parse(localStorage.getItem(EM_KEY)||'null')||{};}catch(e){return {};}}
+  function emHas(e){return !!(e.Name||e.Blood||e.P1||e.P2||e.Med);}
+  function emFill(){var e=emGet();EMF.forEach(function(k){$('e'+k).value=e[k]||'';});}
+  function emUI(){$('lockEm').hidden=!emHas(emGet());}
+  $('emSave').addEventListener('click',function(){
+    var e={};EMF.forEach(function(k){e[k]=$('e'+k).value.trim();});
+    try{localStorage.setItem(EM_KEY,JSON.stringify(e));toast('Emergency card save ho gaya');}catch(x){toast('Save nahi ho paya');}
+    emUI();
+  });
+  function emShow(){
+    var e=emGet(),b=$('emBody');b.replaceChildren();
+    if(!emHas(e)) b.append(h('p',{text:'Emergency card abhi bhara nahi hai. App kholkar "Emergency card" me bharo.'}));
+    if(e.Name) b.append(h('h2',{text:e.Name}));
+    if(e.Blood) b.append(h('div',{class:'emblood'},h('small',{text:'Blood group'}),h('b',{text:e.Blood})));
+    if(e.Med) b.append(h('p',{class:'emmed',text:e.Med}));
+    [[e.P1n,e.P1],[e.P2n,e.P2]].forEach(function(c){
+      if(c[1]) b.append(h('a',{class:'btn emcall',href:'tel:'+c[1].replace(/[^\d+]/g,''),text:'Call: '+(c[0]||'Emergency')+' ('+c[1]+')'}));
+    });
+    $('emerg').hidden=false;
+  }
+  $('emShow').addEventListener('click',emShow);
+  $('lockEm').addEventListener('click',emShow);
+  $('emClose').addEventListener('click',function(){$('emerg').hidden=true;});
+  emFill(); emUI();
+
+  /* ---------- Expiry ki yaad ---------- */
+  function icsDoc(d){
+    var t=TYPES[d.type],nm=((d.title||t.name)+(d.holder?' ('+d.holder+')':'')).replace(/[\\;,\r\n]/g,' ');
+    var ds=d.date.replace(/-/g,''),nx=new Date(parseISO(d.date)+864e5).toISOString().slice(0,10).replace(/-/g,'');
+    var now=new Date().toISOString().replace(/[-:]/g,'').slice(0,15)+'Z';
+    var L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Apna Locker//HI','BEGIN:VEVENT','UID:'+d.id+'@apnalocker','DTSTAMP:'+now,
+      'DTSTART;VALUE=DATE:'+ds,'DTEND;VALUE=DATE:'+nx,'SUMMARY:'+nm+' ki tareekh khatam','DESCRIPTION:Naya banwane ya renew karne ka waqt.'];
+    [['-P30D','30 din'],['-P7D','7 din'],['-P1D','1 din']].forEach(function(a){L.push('BEGIN:VALARM','TRIGGER:'+a[0],'ACTION:DISPLAY','DESCRIPTION:'+nm+': '+a[1]+' baaki','END:VALARM');});
+    L.push('END:VEVENT','END:VCALENDAR');
+    var f=new File([L.join('\r\n')],'yaad-'+(t.code||'doc')+'.ics',{type:'text/calendar'});
+    var a=h('a',{href:URL.createObjectURL(f),download:f.name});document.body.append(a);a.click();a.remove();
+    toast('Calendar file khuli ho to "Add" dabao');
+  }
+  function nmsg(t,err){var m=$('notifMsg');m.textContent=t;m.className='formmsg'+(err?' err':'');}
+  function checkExpiry(force){
+    if(!('Notification' in window)||Notification.permission!=='granted')return;
+    var today=isoOffset(0);
+    try{if(!force&&localStorage.getItem('al.notif')===today)return;}catch(e){}
+    var n=docs.filter(function(d){return d.date&&!d.sample&&daysLeft(d.date)<=30;}).length;
+    if(!n)return;
+    try{localStorage.setItem('al.notif',today);}catch(e){}
+    if(navigator.serviceWorker)navigator.serviceWorker.getRegistration().then(function(r){
+      if(r)r.showNotification('Apna Locker',{body:n+' kaagaz ki tareekh paas hai ya nikal gayi. App kholkar dekho.',icon:'icon-192.png',tag:'expiry'});
+    });
+  }
+  $('notifBtn').addEventListener('click',function(){
+    if(!('Notification' in window)){nmsg('Is browser me notification nahi hai. Calendar wali yaad use karo.',true);return;}
+    Notification.requestPermission().then(function(p){
+      if(p==='granted'){nmsg('Chalu ho gaya. Jab bhi app khologe aur kisi kaagaz ki tareekh 30 din ke andar hogi, yaad aayegi.');checkExpiry(true);}
+      else nmsg('Permission nahi mili.',true);
+    });
+  });
+
+  /* ---------- splash ---------- */
+  (function(){
+    var root=document.documentElement,sp=$('splash');
+    if(!root.classList.contains('splash'))return;
+    try{sessionStorage.setItem('al.splash','1');}catch(e){}
+    setTimeout(function(){sp.classList.add('out');setTimeout(function(){root.classList.remove('splash');},480);},1600);
+  })();
+  dbAll().then(function(rows){docs=rows||[];}).catch(function(){volatile=true;}).then(render).then(function(){checkExpiry(false);});
 })();
 </script>
 

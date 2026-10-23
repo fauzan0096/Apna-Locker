@@ -22,6 +22,14 @@ Kaagzaat ek jagah: photo rakho, naam se dhundho, expiry ki tareekh ki yaad pao, 
 1. `index.html` badlo.
 2. `sw.js` mein `VERSION` badlo (`apna-locker-v1` se `apna-locker-v2`), warna purani copy chalti rahegi.
 
+## Scan, PDF aur Bhejna
+
+Naya kaagaz jodte waqt "Camera se scan karo" se page khicho (kaala-safed saaf filter ke saath). Save ke baad har kaagaz par "PDF bhejo" dabao: WhatsApp/Gmail jaisa share menu khulega. Computer par PDF download hoti hai. Ye sab phone ke andar hota hai, koi server nahi.
+
+## Google Drive backup (optional)
+
+User chahe to "Drive par save karo" se apna data apne hi Google Drive me rakh sakta hai (sirf `drive.file` permission, app ki banayi file tak). Data seedha phone se Drive me jaata hai, developer ko nahi dikhta. Chalane ke liye `index.html` me `GOOGLE_CLIENT_ID` bharo: Google Cloud Console me OAuth Client ID (Web) banao, Authorized JavaScript origins me apna GitHub Pages link (jaise `https://naam.github.io`) daalo. Client ID secret nahi hota, repo me rakhna theek hai.
+
 ## Data kahan rehta hai
 
 Abhi sab kuch (photo aur jaankari) har user ke apne browser (IndexedDB) mein rehta hai, kisi server par nahi. Phone badalne ya browser ka data saaf karne par chala jaata hai. Cloud backup aur login agla kadam hai.
